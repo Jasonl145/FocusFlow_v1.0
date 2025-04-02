@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import Login from './app/screens/Login';
 import List from './app/screens/List';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -12,20 +12,21 @@ import Extra from './app/screens/Extra';
 
 
 const Stack = createNativeStackNavigator();
-const InsideStack = createNativeStackNavigator();
+const Tabs = createBottomTabNavigator();
 
-function InsideLayout() {
+
+function BottomTab() {
   return (
-    <InsideStack.Navigator>
-      <InsideStack.Screen name='My todos' component={List}/>
-      <InsideStack.Screen name="Extras" component={Extra}/>
-      
-    </InsideStack.Navigator>
+    <Tabs.Navigator>
+      <Tabs.Screen name="Home" component={List} />
+      <Tabs.Screen name="Extras" component={Extra} options={{ headerShown: false }} />
+    </Tabs.Navigator>
   )
 }
+
 export default function App() {
   const [user, setUser] = useState<User | null>(null)
-  
+
   useEffect(() => {
     onAuthStateChanged(firebase_auth, (user) => {
       console.log('user', user);
@@ -37,11 +38,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login'>
         {user ? (
-          <Stack.Screen name="Inside" component={InsideLayout} options={{ headerShown: false}}></Stack.Screen>
+          <Stack.Screen name="Tabs" component={BottomTab} options={{ headerShown: false }}></Stack.Screen>
         ) : (
-          <Stack.Screen name="Login" component={Login} options={{ headerShown: false}}></Stack.Screen>
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}></Stack.Screen>
         )}
-        
+
       </Stack.Navigator>
     </NavigationContainer>
   );
