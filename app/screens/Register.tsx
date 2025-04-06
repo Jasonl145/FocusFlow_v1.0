@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { firebase_auth } from "../../FirebaseConfig";
@@ -28,10 +29,20 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  
+
   const signUp = async () => {
     setLoading(true);
     try {
+      if (password !== confirmPassword) {
+        Alert.alert('Error', 'Passwords do not match');
+        return;
+      }
+
+      if (password === confirmPassword && password.length < 7) {
+        Alert.alert('Error', 'Please make your password 7 characters or longer.');
+        return;
+      }
+
       const response = await createUserWithEmailAndPassword(
         firebase_auth,
         email,
@@ -61,12 +72,14 @@ const Register = () => {
         placeholder="password"
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
       />
       <TextInput
         style={styles.textInput}
         placeholder="confirm password"
         value={confirmPassword}
         onChangeText={setConfirmPassword}
+        secureTextEntry
       />
 
       {loading ? (
