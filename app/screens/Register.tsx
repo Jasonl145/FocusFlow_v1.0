@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { firebase_auth } from "../../FirebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -20,22 +20,25 @@ type RootStackParamList = {
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
-const Login = () => {
+
+const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation<LoginScreenNavigationProp>();
-
-  const signIn = async () => {
+  
+  const signUp = async () => {
     setLoading(true);
     try {
-      const response = await signInWithEmailAndPassword(
+      const response = await createUserWithEmailAndPassword(
         firebase_auth,
         email,
         password
       );
       console.log(response);
+      alert("Check your email!");
     } catch (error: any) {
       console.log(error);
       alert("Sign in failed: " + error.message);
@@ -46,37 +49,41 @@ const Login = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Sign up</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="email"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.textInput}
+        placeholder="password"
+        value={password}
+        onChangeText={setPassword}
+      />
+      <TextInput
+        style={styles.textInput}
+        placeholder="confirm password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+      />
+
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <>
-          <Text style={styles.title}>Login</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="email"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-          <TouchableOpacity style={styles.button} onPress={signIn}>
-            <Text style={styles.text}>Login</Text>
+          <TouchableOpacity style={styles.button} onPress={signUp}>
+            <Text style={styles.text}>Create account</Text>
           </TouchableOpacity>
-          <Text onPress={() => navigation.navigate("Register")}>
-            Don't have an account? Register here
-          </Text>
+          <Text onPress={() => navigation.navigate("Login")}>Have an account? Log in here</Text>
         </>
       )}
     </SafeAreaView>
   );
 };
 
-export default Login;
+export default Register;
 
 const styles = StyleSheet.create({
   container: {
