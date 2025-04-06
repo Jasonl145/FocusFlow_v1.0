@@ -17,10 +17,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 type RootStackParamList = {
   Login: undefined,
   Register: undefined,
-};
+}; // List all the pages we need for navigation. 'Undefined' because the pages do not need any extra parameters
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
-
+// A prop used to assist in navigation
+// We might want to make the above two types common types in a common.ts file somewhere as we repeat ourselves in Login.tsx/
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -28,21 +29,19 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const navigation = useNavigation<LoginScreenNavigationProp>(); // The prop we made now tells the code that we can access either Login or Register with no extra parameters needed.
 
   const signUp = async () => {
     setLoading(true);
     try {
-      if (password !== confirmPassword) {
-        Alert.alert('Error', 'Passwords do not match');
-        return;
-      }
-
       if (password === confirmPassword && password.length < 7) {
         Alert.alert('Error', 'Please make your password 7 characters or longer.');
         return;
       }
-
+      if (password !== confirmPassword) {
+        Alert.alert('Error', 'Passwords do not match');
+        return;
+      }
       const response = await createUserWithEmailAndPassword(
         firebase_auth,
         email,

@@ -16,9 +16,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 type RootStackParamList = {
   Login: undefined,
   Register: undefined,
-};
+}; // List all the pages we need for navigation. 'Undefined' because the pages do not need any extra parameters
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
+// A prop used to assist in navigation
+// We might want to make the above two types common types in a common.ts file somewhere as we repeat ourselves in Login.tsx
 
 const Login = () => {
   const [email, setEmail] = useState("");
