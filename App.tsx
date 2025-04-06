@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { firebase_auth } from './FirebaseConfig';
 import Extra from './app/screens/Extra';
 
-
+import {MaterialIcons, Entypo} from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -17,9 +17,33 @@ const Tabs = createBottomTabNavigator();
 
 function BottomTab() {
   return (
-    <Tabs.Navigator>
-      <Tabs.Screen name="Home" component={List} />
-      <Tabs.Screen name="Extras" component={Extra} options={{ headerShown: false }} />
+    <Tabs.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: '#255ec2', // Color for active tab
+        tabBarInactiveTintColor: 'gray',  // Color for inactive tabs
+      }}
+    >
+      <Tabs.Screen 
+        name="Home" 
+        component={List} 
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <Entypo name="calendar" color={color} size={size} />
+          ),
+        }}
+        />
+      <Tabs.Screen 
+        name="Extras" 
+        component={Extra} 
+        options={{ 
+          tabBarLabel: 'Extras',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="access-alarm" color={color} size={30} />
+          ),
+          headerShown: false 
+        }} 
+        />
     </Tabs.Navigator>
   )
 }
