@@ -11,7 +11,7 @@ const List = ({ navigation } : RouterProps) => {
   return (
     <View>
       <Button onPress={() => firebase_auth.signOut()} title="Sign Out"/>
-      <Button onPress={() => navigation.navigate('Extras')} title="Explore"/>
+      <Button onPress={() => navigation.navigate('Home')} title="Explore"/>
     </View>
   );
 };

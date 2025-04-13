@@ -4,7 +4,7 @@ import React from 'react'
 const Extra = () => {
   return (
     <View>
-      <Text>Extra</Text>
+      <Text>Timer</Text>
     </View>
   );
 };

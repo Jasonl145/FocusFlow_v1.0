@@ -2,12 +2,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import Login from './app/screens/Login';
-import List from './app/screens/List';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { firebase_auth } from './FirebaseConfig';
-import Extra from './app/screens/Extra';
+
+import Login from './app/screens/Login';
+import List from './app/screens/List';
+import Timer from './app/screens/Timer';
+import Home from './app/screens/Home';
 
 import {MaterialIcons, Entypo} from '@expo/vector-icons';
 
@@ -25,7 +27,7 @@ function BottomTab() {
     >
       <Tabs.Screen 
         name="Home" 
-        component={List} 
+        component={Home} 
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
@@ -33,17 +35,30 @@ function BottomTab() {
           ),
         }}
         />
+      
       <Tabs.Screen 
-        name="Extras" 
-        component={Extra} 
+        name="Timer" 
+        component={Timer} 
         options={{ 
-          tabBarLabel: 'Extras',
+          tabBarLabel: 'Timer',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="access-alarm" color={color} size={30} />
           ),
           headerShown: false 
         }} 
         />
+
+      <Tabs.Screen 
+        name="List" 
+        component={List} 
+        options={{
+          tabBarLabel: 'List',
+          tabBarIcon: ({ color, size }) => (
+            <Entypo name="list" color={color} size={size} />
+          ),
+        }}
+        />
+  
     </Tabs.Navigator>
   )
 }
