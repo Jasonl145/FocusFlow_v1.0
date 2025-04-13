@@ -33,6 +33,7 @@ function BottomTab() {
           tabBarIcon: ({ color, size }) => (
             <Entypo name="calendar" color={color} size={size} />
           ),
+          headerShown: false 
         }}
         />
       
