@@ -43,7 +43,7 @@ function BottomTab() {
         options={{ 
           tabBarLabel: 'Timer',
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="access-alarm" color={color} size={30} />
+            <MaterialIcons name="access-alarm" color={color} size={size} />
           ),
           headerShown: false 
         }} 
@@ -57,6 +57,7 @@ function BottomTab() {
           tabBarIcon: ({ color, size }) => (
             <Entypo name="list" color={color} size={size} />
           ),
+          headerShown: false
         }}
         />
   
