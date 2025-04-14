@@ -15,14 +15,15 @@ const getRemainingTime = (time: number) => {
 };
 
 
-
 const Timer = () => {
   const [time, setTime] = useState<number>(0); // in seconds!!!
-  const [isRunning, setIsRunning] = useState(false);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
   const hasRun = (time == 0) ? false : true;
+
   const handleToggleTimer = () => {
     setIsRunning(!isRunning);
   }
+
   return (
     <SafeAreaView style={styles.container}>
       {/*<StatusBar barStyle={"dark-content"}/> We could use this for dark mode (dark mode ? light-content : dark-content), so saving this here*/}
