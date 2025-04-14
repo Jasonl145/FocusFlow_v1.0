@@ -1,12 +1,13 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native'
 import React from 'react'
 
 const Timer = () => {
   return (
     <View style={styles.container}>
+      {/*<StatusBar barStyle={"dark-content"}/> We could use this for dark mode (dark mode ? light-content : dark-content), so saving this here*/}
       <Text>Timer</Text>
       <TouchableOpacity style={styles.startButton}>
-        <Text>Start timer</Text>
+        <Text style={styles.text}>Start timer</Text>
       </TouchableOpacity>
     </View>
   );
@@ -34,5 +35,10 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.4,
       shadowRadius: 5,
       elevation: 5
+  },
+  text: {
+    color: '#FFFFFF', // Maintained white for clear visibility
+    fontSize: 18, // Slightly larger for emphasis
+    fontWeight: '600', // Semi-bold for a balanced weight
   }
 });

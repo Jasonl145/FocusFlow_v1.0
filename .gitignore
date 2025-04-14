@@ -31,3 +31,4 @@ yarn-error.*
 
 # local env files
 .env*.local
+FirebaseConfig.ts
