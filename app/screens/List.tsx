@@ -1,4 +1,4 @@
-import { View, Text, Button } from 'react-native'
+import { SafeAreaView, Text, Button } from 'react-native'
 import React from 'react'
 import { NavigationProp } from '@react-navigation/native';
 import { firebase_auth } from '../../FirebaseConfig';
@@ -9,10 +9,10 @@ interface RouterProps{
 
 const List = ({ navigation } : RouterProps) => {
   return (
-    <View>
+    <SafeAreaView>
       <Button onPress={() => firebase_auth.signOut()} title="Sign Out"/>
       <Button onPress={() => navigation.navigate('Home')} title="Explore"/>
-    </View>
+    </SafeAreaView>
   );
 };
 

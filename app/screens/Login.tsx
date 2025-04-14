@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TextInput, ActivityIndicator, SafeAreaView, Tou
 import React, { useState } from 'react'
 import { firebase_auth } from '../../FirebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { commonStyles } from '../../lib/constants';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -40,18 +41,18 @@ const Login = () => {
     return (
     <SafeAreaView style={styles.container}>
       
-      <Text style={styles.title}>Login</Text>
+      <Text style={commonStyles.title}>Login</Text>
       <TextInput style={styles.textInput} placeholder="email" value={email} onChangeText={setEmail} />
       <TextInput style={styles.textInput} placeholder="password" value={password} onChangeText={setPassword} secureTextEntry/>
 
         { loading ? (<ActivityIndicator size="large" color="#0000ff" />
         ) : (
             <>
-                <TouchableOpacity style={styles.button} onPress={signIn}>
-                    <Text style={styles.text}>Login</Text>
+                <TouchableOpacity style={commonStyles.defaultButton} onPress={signIn}>
+                    <Text style={commonStyles.defaultButtonText}>Login</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={signUp}>
-                    <Text style={styles.text}>Make Account</Text>
+                <TouchableOpacity style={commonStyles.defaultButton} onPress={signUp}>
+                    <Text style={commonStyles.defaultButtonText}>Make Account</Text>
                 </TouchableOpacity>
             </>
         )}
@@ -68,12 +69,6 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#FAFAFA', // A softer white for a modern, minimalist background
-    },
-    title: {
-      fontSize: 28, // A bit larger for a more striking appearance
-      fontWeight: '800', // Extra bold for emphasis
-      marginBottom: 40, // Increased space for a more airy, open feel
-      color: '#1A237E', // A deep indigo for a sophisticated, modern look
     },
     textInput: {
       height: 50, // Standard height for elegance and simplicity
