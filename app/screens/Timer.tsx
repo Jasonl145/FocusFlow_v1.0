@@ -29,15 +29,12 @@ const formatTime = (hrs: number, mins: number, secs: number) => {
     ? `${formattedHrs}:${formattedMins}:${formattedSecs}`
     : `${formattedMins}:${formattedSecs}`;
 };
-const calculateTimeInSeconds = (hrs: number, mins: number, secs: number) => {
-  // calculates the total time in seconds from the given hours, minutes, and seconds.
-  return hrs * 3600 + mins * 60 + secs;
-};
 
 const createDropdownArrays = (numDistinctTimes: number) => {
+  // create arrays for the picker menus
   let array = [];
   for (let i = 0; i < numDistinctTimes; i++) {
-    array.push(i);
+    array.push(i.toString()); // toString() for the picker
   }
   return array;
 };
@@ -46,13 +43,14 @@ const secAndMinArray = createDropdownArrays(60); // 0-59, we can re-use this for
 const hrsArray = createDropdownArrays(24); // 0-23, use this for 0-23 hours
 
 const Timer = () => {
-  const [hrs, setHrs] = useState<number>(0);
-  const [mins, setMins] = useState<number>(0);
-  const [secs, setSecs] = useState<number>(0);
-  const [time, setTime] = useState<number>(hrs * 3600 + mins * 60 + secs); // TOTAL TIME IN SECONDS
+  const [hourTime, setHourTime] = useState<number>(0);
+  const [minTime, setMinTime] = useState<number>(0);
+  const [secTime, setSecTime] = useState<number>(0);
+  const [time, setTime] = useState<number>(
+    hourTime * 3600 + minTime * 60 + secTime
+  ); // TOTAL TIME IN SECONDS
   const [isRunning, setIsRunning] = useState<boolean>(false);
-
-  const hasRun = time === 0 ? false : true; // Derived state
+  const [hasRun, setHasRun] = useState<boolean>(false);
 
   const handleToggleTimer = () => {
     setIsRunning(!isRunning);
@@ -62,64 +60,61 @@ const Timer = () => {
     return hrs * 3600 + mins * 60 + secs;
   };
 
+  const createPicker = (
+    dropdownArray: string[],
+    timeVariable: number,
+    setTimeVariable: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    return (
+      <Picker
+        style={styles.picker}
+        selectedValue={timeVariable.toString()}
+        onValueChange={(itemValue) => setTimeVariable(Number(itemValue))}
+      >
+        {dropdownArray.map((timeUnit) => (
+          <Picker.Item key={timeUnit} value={timeUnit} label={timeUnit} />
+        ))}
+      </Picker>
+    );
+  };
+
   useEffect(() => {
     // Update the total time in seconds whenever hrs, mins, or secs change
-    setTime(calculateTimeInSeconds(hrs, mins, secs));
-  }, [hrs, mins, secs]);
+    setTime(calculateTimeInSeconds(hourTime, minTime, secTime));
+  }, [hourTime, minTime, secTime]);
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={commonStyles.title}>Timer</Text>
-      {/* {hasRun ? (
+      {hasRun ? (
         <Text style={styles.time}>
           {`${String(Math.floor(time / 3600)).padStart(2, "0")}:${String(
             Math.floor((time % 3600) / 60)
           ).padStart(2, "0")}:${String(time % 60).padStart(2, "0")}`}
         </Text>
       ) : (
-        <View style={styles.setTimeContainer}>
-          <Picker
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            selectedValue={hrs}
-            onValueChange={(itemValue) => setHrs(itemValue as number)}
-            mode="dropdown"
-          >
-            {hrsArray.map((value) => (
-              <Picker.Item key={value} label={value.toString()} value={value} />
-            ))}
-          </Picker>
-
-          <Picker
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            selectedValue={mins}
-            onValueChange={(itemValue) => setMins(itemValue as number)}
-            mode="dropdown"
-          >
-            {secAndMinArray.map((value) => (
-              <Picker.Item key={value} label={value.toString()} value={value} />
-            ))}
-          </Picker>
-
-          <Picker
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            selectedValue={secs}
-            onValueChange={(itemValue) => setSecs(itemValue as number)}
-            mode="dropdown"
-          >
-            {secAndMinArray.map((value) => (
-              <Picker.Item key={value} label={value.toString()} value={value} />
-            ))}
-          </Picker>
+        // Hours picker, minute picker, seconds picker in order
+        <View style={styles.setTimeContainer} aria-label="Set time">
+          {createPicker(hrsArray, hourTime, setHourTime)}
+          <Text style={[commonStyles.title, styles.pushColonsDown]}>:</Text>
+          {createPicker(secAndMinArray, minTime, setMinTime)}
+          <Text style={[commonStyles.title, styles.pushColonsDown]}>:</Text>
+          {createPicker(secAndMinArray, secTime, setSecTime)}
         </View>
-      )}  */}
+      )}
       <TouchableOpacity
         onPress={() => {}} //Update this later}
         style={commonStyles.defaultButton}
       >
-        <Text style={commonStyles.defaultButtonText}>Start timer</Text>
+        <Text
+          style={commonStyles.defaultButtonText}
+          onPress={() => {
+            setHasRun(true);
+            handleToggleTimer();
+          }}
+        >
+          Start timer
+        </Text>
       </TouchableOpacity>
 
       {hasRun &&
@@ -208,5 +203,8 @@ const styles = StyleSheet.create({
         marginRight: 10,
       },
     }),
+  },
+  pushColonsDown: {
+    marginTop: 30,
   },
 });
