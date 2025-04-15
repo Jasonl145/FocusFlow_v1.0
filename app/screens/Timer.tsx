@@ -17,18 +17,8 @@ const getRemainingTime = (time: number /* in seconds*/) => {
   const secs = time % 60; // Correctly calculate remaining seconds
   return { hrs, mins, secs };
 };
-const formatNumber = (num: number) =>
-  num >= 0 && num < 60 ? String(num).padStart(2, "0") : -1; // formats number for time. returns -1 if the number is above 59 or below 0.
-
-const formatTime = (hrs: number, mins: number, secs: number) => {
-  // This function formats the time in HH:MM:SS format. If hours are 0, it will show MM:SS format.
-  const formattedHrs = formatNumber(hrs);
-  const formattedMins = formatNumber(mins);
-  const formattedSecs = formatNumber(secs);
-  return hrs > 0
-    ? `${formattedHrs}:${formattedMins}:${formattedSecs}`
-    : `${formattedMins}:${formattedSecs}`;
-};
+// const formatNumber = (num: number) =>
+//   num >= 0 && num < 60 ? String(num).padStart(2, "0") : -1; // formats number for time. returns -1 if the number is above 59 or below 0.
 
 const createDropdownArrays = (numDistinctTimes: number) => {
   // create arrays for the picker menus
@@ -46,24 +36,29 @@ const Timer = () => {
   const [hourTime, setHourTime] = useState<number>(0);
   const [minTime, setMinTime] = useState<number>(0);
   const [secTime, setSecTime] = useState<number>(0);
-  const [time, setTime] = useState<number>(
-    hourTime * 3600 + minTime * 60 + secTime
-  ); // TOTAL TIME IN SECONDS
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [hasRun, setHasRun] = useState<boolean>(false);
-
-  const handleToggleTimer = () => {
-    setIsRunning(!isRunning);
-  };
+  // hour, minute, second State
 
   const calculateTimeInSeconds = (hrs: number, mins: number, secs: number) => {
     return hrs * 3600 + mins * 60 + secs;
   };
 
+  const [time, setTime] = useState<number>(
+    calculateTimeInSeconds(hourTime, minTime, secTime)
+  ); // Time State (IN SECONDS)
+
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [paused, setPaused] = useState<boolean>(false);
+
+
+  const handleRunning = (val: boolean) => {
+    setIsRunning(val);
+  };
+
   const createPicker = (
     dropdownArray: string[],
     timeVariable: number,
-    setTimeVariable: React.Dispatch<React.SetStateAction<number>>
+    setTimeVariable: React.Dispatch<React.SetStateAction<number>>, // this means the type is a setter function
+    timeAbbreviation: string
   ) => {
     return (
       <Picker
@@ -72,7 +67,11 @@ const Timer = () => {
         onValueChange={(itemValue) => setTimeVariable(Number(itemValue))}
       >
         {dropdownArray.map((timeUnit) => (
-          <Picker.Item key={timeUnit} value={timeUnit} label={timeUnit} />
+          <Picker.Item
+            key={timeUnit}
+            value={timeUnit}
+            label={timeUnit + timeAbbreviation}
+          />
         ))}
       </Picker>
     );
@@ -86,53 +85,50 @@ const Timer = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={commonStyles.title}>Timer</Text>
-      {hasRun ? (
-        <Text style={styles.time}>
-          {`${String(Math.floor(time / 3600)).padStart(2, "0")}:${String(
-            Math.floor((time % 3600) / 60)
-          ).padStart(2, "0")}:${String(time % 60).padStart(2, "0")}`}
-        </Text>
+      {isRunning ? (
+        <>
+          <Text style={styles.time}>
+            {
+              `${String(Math.floor(time / 3600)).padStart(2, "0")}:${String(
+                Math.floor((time % 3600) / 60)
+              ).padStart(2, "0")}:${String(time % 60).padStart(2, "0")}`
+              /* THE ABOVE IS A FORMATTED VERSION OF THE TIME HH:MM:SS*/
+            }
+          </Text>
+          <TouchableOpacity
+            style={styles.resumeButton}
+            onPress={() => {
+              setPaused(!paused);
+              handleRunning(true);
+            }}
+          >
+            <Text style={commonStyles.defaultButtonText}>{paused ? "Resume timer" : "Pause timer"}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.stopButton}
+            onPress={() => handleRunning(false)}
+          >
+            <Text style={commonStyles.defaultButtonText}>Cancel timer</Text>
+          </TouchableOpacity>
+        </>
       ) : (
         // Hours picker, minute picker, seconds picker in order
-        <View style={styles.setTimeContainer} aria-label="Set time">
-          {createPicker(hrsArray, hourTime, setHourTime)}
-          <Text style={[commonStyles.title, styles.pushColonsDown]}>:</Text>
-          {createPicker(secAndMinArray, minTime, setMinTime)}
-          <Text style={[commonStyles.title, styles.pushColonsDown]}>:</Text>
-          {createPicker(secAndMinArray, secTime, setSecTime)}
-        </View>
+        <>
+          <View style={styles.setTimeContainer} aria-label="Set time">
+            {createPicker(hrsArray, hourTime, setHourTime, "h")}
+            <Text style={[commonStyles.title, styles.pushColonsDown]}>:</Text>
+            {createPicker(secAndMinArray, minTime, setMinTime, "m")}
+            <Text style={[commonStyles.title, styles.pushColonsDown]}>:</Text>
+            {createPicker(secAndMinArray, secTime, setSecTime, "s")}
+          </View>
+          <TouchableOpacity
+            style={commonStyles.defaultButton}
+            onPress={() => handleRunning(true)}
+          >
+            <Text style={commonStyles.defaultButtonText}>Start timer</Text>
+          </TouchableOpacity>
+        </>
       )}
-      <TouchableOpacity
-        onPress={() => {}} //Update this later}
-        style={commonStyles.defaultButton}
-      >
-        <Text
-          style={commonStyles.defaultButtonText}
-          onPress={() => {
-            setHasRun(true);
-            handleToggleTimer();
-          }}
-        >
-          Start timer
-        </Text>
-      </TouchableOpacity>
-
-      {hasRun &&
-        (isRunning ? (
-          <TouchableOpacity
-            onPress={handleToggleTimer}
-            style={styles.stopButton}
-          >
-            <Text style={commonStyles.defaultButtonText}>Stop timer</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={handleToggleTimer}
-            style={styles.resumeButton}
-          >
-            <Text style={commonStyles.defaultButtonText}>Resume timer</Text>
-          </TouchableOpacity>
-        ))}
     </SafeAreaView>
   );
 };
