@@ -6,10 +6,11 @@ import {
   ActivityIndicator,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { firebase_auth } from "../../FirebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -20,24 +21,34 @@ type RootStackParamList = {
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 // A prop used to assist in navigation
-// We might want to make the above two types common types in a common.ts file somewhere as we repeat ourselves in Login.tsx
+// We might want to make the above two types common types in a common.ts file somewhere as we repeat ourselves in Login.tsx/
 
-const Login = () => {
+const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const navigation = useNavigation<LoginScreenNavigationProp>(); // The prop we made now tells the code that we can access either Login or Register with no extra parameters needed.
 
-  const signIn = async () => {
+  const signUp = async () => {
     setLoading(true);
     try {
-      const response = await signInWithEmailAndPassword(
+      if (password === confirmPassword && password.length < 7) {
+        Alert.alert('Error', 'Please make your password 7 characters or longer.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        Alert.alert('Error', 'Passwords do not match');
+        return;
+      }
+      const response = await createUserWithEmailAndPassword(
         firebase_auth,
         email,
         password
       );
       console.log(response);
+      alert("Check your email!");
     } catch (error: any) {
       console.log(error);
       alert("Sign in failed: " + error.message);
@@ -48,37 +59,43 @@ const Login = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Sign up</Text>
+      <TextInput
+        style={styles.textInput}
+        placeholder="email"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.textInput}
+        placeholder="password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TextInput
+        style={styles.textInput}
+        placeholder="confirm password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
+
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <>
-          <Text style={styles.title}>Login</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="email"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-          <TouchableOpacity style={styles.button} onPress={signIn}>
-            <Text style={styles.text}>Login</Text>
+          <TouchableOpacity style={styles.button} onPress={signUp}>
+            <Text style={styles.text}>Create account</Text>
           </TouchableOpacity>
-          <Text onPress={() => navigation.navigate("Register")}>
-            Don't have an account? Register here
-          </Text>
+          <Text onPress={() => navigation.navigate("Login")}>Have an account? Log in here</Text>
         </>
       )}
     </SafeAreaView>
   );
 };
 
-export default Login;
+export default Register;
 
 const styles = StyleSheet.create({
   container: {
