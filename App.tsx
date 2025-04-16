@@ -6,11 +6,13 @@ import Login from "./app/screens/Login";
 import Register from "./app/screens/Register";
 import List from "./app/screens/List";
 import Home from "./app/screens/Home";
+import Timer from './app/screens/Timer';
+
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { firebase_auth } from "./FirebaseConfig";
 //import Extra from "./app/screens/Extra";
-import Timer from './app/screens/Timer';
+
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 
 import { StyleSheet, Text, TouchableOpacity } from "react-native";

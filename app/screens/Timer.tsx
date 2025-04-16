@@ -25,7 +25,7 @@ const Timer = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={commonStyles.defaultContainer}>
       {/*<StatusBar barStyle={"dark-content"}/> We could use this for dark mode (dark mode ? light-content : dark-content), so saving this here*/}
       <Text style={commonStyles.title}>Timer</Text>
       <TouchableOpacity style={commonStyles.defaultButton}>
@@ -50,12 +50,6 @@ const Timer = () => {
 export default Timer;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   stopButton: {
     width: "90%",
     marginVertical: 15,

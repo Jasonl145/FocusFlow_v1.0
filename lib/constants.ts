@@ -1,3 +1,4 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import { StyleSheet } from "react-native";
 
 export const commonStyles = StyleSheet.create({
@@ -6,6 +7,17 @@ export const commonStyles = StyleSheet.create({
     fontWeight: "800", // Extra bold for emphasis
     marginBottom: 40, // Increased space for a more airy, open feel
     color: "#1A237E", // A deep indigo for a sophisticated, modern look
+  },
+  text: {
+    color: "#FFFFFF", // Maintained white for clear visibility
+    fontSize: 18, // Slightly larger for emphasis
+    fontWeight: "600", // Semi-bold for a balanced weight
+  },
+  defaultContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FAFAFA", // A softer white for a modern, minimalist background
   },
   defaultButton: {
     width: "90%",
@@ -26,4 +38,29 @@ export const commonStyles = StyleSheet.create({
     fontSize: 18, // Slightly larger for emphasis
     fontWeight: "600", // Semi-bold for a balanced weight
   },
+  defaultTextInput: {
+    height: 50, // Standard height for elegance and simplicity
+    width: "90%", // Full width for a more expansive feel
+    backgroundColor: "#FFFFFF", // Pure white for contrast against the container
+    borderColor: "#E8EAF6", // A very light indigo border for subtle contrast
+    borderWidth: 2,
+    borderRadius: 15, // Softly rounded corners for a modern, friendly touch
+    marginVertical: 15,
+    paddingHorizontal: 25, // Generous padding for ease of text entry
+    fontSize: 16, // Comfortable reading size
+    color: "#3C4858", // A dark gray for readability with a hint of warmth
+    shadowColor: "#9E9E9E", // A medium gray shadow for depth
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4, // Slightly elevated for a subtle 3D effect
+  }
 });
+
+export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
+// A prop used to assist in login/register navigation
+
+type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
+}; // All pages needed for login/register navigation. 'Undefined' because the pages do not need any extra parameters
