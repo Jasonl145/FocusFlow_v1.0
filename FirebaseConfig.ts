@@ -4,8 +4,12 @@ import { initializeAuth, getReactNativePersistence } from "firebase/auth"
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 // Your web app's Firebase configuration
 const firebaseConfig = {
-//add your configs/api key here
-  
+  apiKey: "AIzaSyAQ9K4yy3c4IZX3ZweAatCeFp0jlWMPlKc",
+  authDomain: "focusflow-e84c8.firebaseapp.com",
+  projectId: "focusflow-e84c8",
+  storageBucket: "focusflow-e84c8.firebasestorage.app",
+  messagingSenderId: "68494832024",
+  appId: "1:68494832024:web:e99a4575b442d58796bbed"
 };
   
 
