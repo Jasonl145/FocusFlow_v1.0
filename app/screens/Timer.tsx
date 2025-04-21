@@ -32,6 +32,7 @@ const createDropdownArrays = (numDistinctTimes: number) => {
 const secAndMinArray = createDropdownArrays(60); // 0-59, we can re-use this for 0-59 seconds and 0-59 minutes
 const hrsArray = createDropdownArrays(24); // 0-23, use this for 0-23 hours
 
+
 const Timer = () => {
   const [hourTime, setHourTime] = useState<number>(0);
   const [minTime, setMinTime] = useState<number>(0);
@@ -48,7 +49,6 @@ const Timer = () => {
 
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [paused, setPaused] = useState<boolean>(false);
-
 
   const handleRunning = (val: boolean) => {
     setIsRunning(val);
@@ -78,12 +78,37 @@ const Timer = () => {
   };
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+  
+    if (isRunning && !paused) {
+      interval = setInterval(() => {
+        setTime((prevTime) => {
+          if (prevTime <= 0) {
+            clearInterval(interval!); // stop the timer when it hits 0
+            setIsRunning(false); // set isRunning to false
+            return 0; // ensure the time doesn't go below 0
+          }
+          return prevTime - 1; // decrease time by 1 second
+        });
+      }, 1000); // run every 1 second
+    } else if (!isRunning && interval) {
+      clearInterval(interval); // clear the interval if the timer is stopped
+    }
+  
+    return () => {
+      if (interval) clearInterval(interval); // cleanup on unmount or when isRunning changes
+    };
+  }, [isRunning]);
+
+
+
+  useEffect(() => {
     // Update the total time in seconds whenever hrs, mins, or secs change
     setTime(calculateTimeInSeconds(hourTime, minTime, secTime));
   }, [hourTime, minTime, secTime]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={commonStyles.defaultContainer}>
       <Text style={commonStyles.title}>Timer</Text>
       {isRunning ? (
         <>
@@ -102,11 +127,16 @@ const Timer = () => {
               handleRunning(true);
             }}
           >
-            <Text style={commonStyles.defaultButtonText}>{paused ? "Resume timer" : "Pause timer"}</Text>
+            <Text style={commonStyles.defaultButtonText}>
+              {paused ? "Resume timer" : "Pause timer"}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.stopButton}
-            onPress={() => handleRunning(false)}
+            onPress={() => {
+              setPaused(!paused);
+              handleRunning(false);
+            }}
           >
             <Text style={commonStyles.defaultButtonText}>Cancel timer</Text>
           </TouchableOpacity>
@@ -123,7 +153,14 @@ const Timer = () => {
           </View>
           <TouchableOpacity
             style={commonStyles.defaultButton}
-            onPress={() => handleRunning(true)}
+            onPress={() => {
+              if (time !== 0) {
+                handleRunning(true);
+                setPaused(false);
+              } else {
+                alert("Please set a valid time");
+              }
+            }}
           >
             <Text style={commonStyles.defaultButtonText}>Start timer</Text>
           </TouchableOpacity>
@@ -136,12 +173,6 @@ const Timer = () => {
 export default Timer;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   stopButton: {
     width: "90%",
     marginVertical: 15,
