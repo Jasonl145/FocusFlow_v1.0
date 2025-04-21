@@ -54,7 +54,18 @@ export const commonStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 4, // Slightly elevated for a subtle 3D effect
-  }
+  },
+  defaultFloatingButton: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "#5C6BC0", // A lighter indigo to complement the title color
+    width: 60,
+    height: 60,
+    borderRadius: 30, // Fully rounded for a modern look
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;

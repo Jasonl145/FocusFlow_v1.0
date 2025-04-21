@@ -2,6 +2,8 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { Agenda } from 'react-native-calendars';
 import { Card } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
+import { commonStyles } from '../../lib/constants';
 
 const timeToString = (time) => {
   const date = new Date(time);
@@ -60,6 +62,11 @@ const Home: React.FC = () => {
         selected={'2025-04-13'}
         renderItem={renderItem}
         />
+        <TouchableOpacity style={commonStyles.defaultFloatingButton}
+          onPress={() => console.log('Floating button pressed')}
+        >
+          <Ionicons name="add" size={24} color="white" />
+        </TouchableOpacity>
     </View>
   )
 }
