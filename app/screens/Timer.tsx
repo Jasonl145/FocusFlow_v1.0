@@ -98,11 +98,12 @@ const Timer = () => {
     return () => {
       if (interval) clearInterval(interval); // cleanup on unmount or when isRunning changes
     };
-  }, [isRunning]);
+  }, [isRunning, paused]);
 
 
 
   useEffect(() => {
+
     // Update the total time in seconds whenever hrs, mins, or secs change
     setTime(calculateTimeInSeconds(hourTime, minTime, secTime));
   }, [hourTime, minTime, secTime]);
@@ -112,6 +113,8 @@ const Timer = () => {
       <Text style={commonStyles.title}>Timer</Text>
       {isRunning ? (
         <>
+          <Text>paused: {paused.toString()}</Text>
+          <Text>isRunning: {isRunning.toString()}</Text>
           <Text style={styles.time}>
             {
               `${String(Math.floor(time / 3600)).padStart(2, "0")}:${String(
@@ -136,6 +139,9 @@ const Timer = () => {
             onPress={() => {
               setPaused(!paused);
               handleRunning(false);
+              setHourTime(0); // Reset the hour picker
+              setMinTime(0); // Reset the minute picker
+              setSecTime(0); // Reset the second picker
             }}
           >
             <Text style={commonStyles.defaultButtonText}>Cancel timer</Text>
