@@ -59,7 +59,7 @@ const Home: React.FC = () => {
       <Agenda
         items={items}
         loadItemsForMonth={loadItems}
-        selected={'2025-04-13'}
+        selected={timeToString(Date.now())}
         renderItem={renderItem}
         />
         <TouchableOpacity style={commonStyles.defaultFloatingButton}
