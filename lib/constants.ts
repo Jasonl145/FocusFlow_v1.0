@@ -75,3 +75,14 @@ type RootStackParamList = {
   Login: undefined;
   Register: undefined;
 }; // All pages needed for login/register navigation. 'Undefined' because the pages do not need any extra parameters
+
+export const defaultTasks = [
+  {
+    name: "Task 1",
+    height: 50,
+  },
+  {
+    name: "Task 2",
+    height: 50,
+  }
+];
