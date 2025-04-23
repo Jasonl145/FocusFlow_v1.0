@@ -76,13 +76,39 @@ type RootStackParamList = {
   Register: undefined;
 }; // All pages needed for login/register navigation. 'Undefined' because the pages do not need any extra parameters
 
-export const defaultTasks = [
+export type Task = {
+  id: number;
+  user_id: number;
+  name: string;
+  date: string;
+  start_time?: string;
+  end_time?: string;
+  strict: boolean;
+}
+
+type userTasksType = {
+  [key: string]: Task[]; // key = date,
+}
+
+export const defaultTasks: Task[] = [ // tester tasks, delete later
   {
-    name: "Task 1",
-    height: 50,
+    id: 1,
+    user_id: 1,
+    name: "Math exam",
+    date: "2025-04-30", // YYYY-MM-DD format
+    start_time: "09:00",
+    end_time: "10:00",
+    strict: false,
   },
   {
-    name: "Task 2",
-    height: 50,
-  }
+    id: 2,
+    user_id: 1,
+    name: "Go to the gym",
+    date: "2025-05-01",
+    start_time: "12:00",
+    end_time: "13:00", // military time format, we can convert later but this makes it easier to do comparisons by time for sorting
+    strict: true,
+  },
 ];
+
+export const userTasks: userTasksType = {}; // change this to be pulled from db later

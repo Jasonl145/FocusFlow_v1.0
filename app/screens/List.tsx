@@ -20,7 +20,7 @@ const List = ({ navigation } : RouterProps) => {
             delete userTasks[key];
           });
         }
-      } title="Clear all items"/>
+      } title="Clear all tasks"/> {/*temporary clear items functionality*/}
     </SafeAreaView>
   );
 };
