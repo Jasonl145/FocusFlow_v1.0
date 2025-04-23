@@ -109,6 +109,15 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     end_time: "13:00", // military time format, we can convert later but this makes it easier to do comparisons by time for sorting
     strict: true,
   },
+  {
+    id: 3,
+    user_id: 1,
+    name: "Doctor's appointment",
+    date: "2025-05-01",
+    start_time: "15:00",
+    end_time: "16:00",
+    strict: false,
+  },
 ];
 
 export const userTasks: userTasksType = {}; // change this to be pulled from db later
