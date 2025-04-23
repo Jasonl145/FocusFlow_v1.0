@@ -15,8 +15,6 @@ interface TaskProps {
 }
 
 const AgendaItem: React.FC<TaskProps & { onPress: () => void }> = ({ item, onPress }) => {
-
-
   const isEmpty = (item: any) => {
     return !item || Object.keys(item).length === 0;
   };

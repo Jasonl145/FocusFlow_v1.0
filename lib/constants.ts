@@ -76,6 +76,13 @@ type RootStackParamList = {
   Register: undefined;
 }; // All pages needed for login/register navigation. 'Undefined' because the pages do not need any extra parameters
 
+export type TaskCreateNavigationProp = StackNavigationProp<TaskCreateStackParamList, 'Home'>
+
+type TaskCreateStackParamList = {
+  Home: undefined;
+  CreateTask: undefined;
+}
+
 export type Task = {
   id: number;
   user_id: number;

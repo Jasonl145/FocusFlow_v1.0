@@ -1,8 +1,12 @@
 import React from 'react';
 import { SafeAreaView, View, Text, TextInput } from 'react-native';
 import { commonStyles } from '../../lib/constants';
+import { TaskCreateNavigationProp } from '../../lib/constants';
+import { useNavigation } from '@react-navigation/native';
 
 const CreateTask: React.FC = () => {
+  const navigation = useNavigation<TaskCreateNavigationProp>();
+  
   return (
     <SafeAreaView>
         <Text>What task do you have?</Text>

@@ -14,8 +14,10 @@ import {
   Task,
   userTasks,
   defaultTasks,
+  TaskCreateNavigationProp,
 } from "../../lib/constants";
 import AgendaItem from "./AgendaItem";
+import { useNavigation } from "@react-navigation/native";
 
 const timeToString = (time: string) => {
   const date = new Date(time);
@@ -28,9 +30,10 @@ type sectionElement = {
 };
 
 const Home: React.FC = () => {
+  const navigation = useNavigation<TaskCreateNavigationProp>();
+
   const [items, setItems] = useState<sectionElement[]>([]); // State for sections array
 
-  
   const loadItems = () => {
     console.log("Loading items...");
     setTimeout(() => {
@@ -54,7 +57,9 @@ const Home: React.FC = () => {
         }
       });
 
-      sections.sort((a, b) => new Date(a.title).getTime() - new Date(b.title).getTime());
+      sections.sort(
+        (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
+      );
       console.log("Sections before setItems:", sections);
       setItems(sections);
     }, 1000);
@@ -65,8 +70,8 @@ const Home: React.FC = () => {
   }, [items]);
 
   const handleItemPress = (item: Task) => {
-    console.log("Task pressed:", item.name);
-    // Handle the task press event here
+    console.log("Item pressed");
+    // add edit/delete screen later
   };
 
   const renderItem = ({ item }: { item: Task }) => {
@@ -74,26 +79,23 @@ const Home: React.FC = () => {
       <AgendaItem
         item={item}
         onPress={() => {
-        handleItemPress(item);
+          handleItemPress(item);
         }}
       />
     );
   };
 
-  const renderSectionHeader = ({
-    section,
-  }: {
-    section: SectionListData<Task, sectionElement>;
-  }) => {
-    return (
-      <View style={{ backgroundColor: "#f4f4f4", padding: 10 }}>
-        <Text style={{ fontWeight: "bold", color: "#5C6BC0" }}>
-          {section.title}
-        </Text>
-      </View>
-    );
-  };
-  console.log("AgendaList sections:", items);
+  // const renderSectionHeader = ({ section }: { section: SectionListData<Task> }) => {
+  //   return (
+  //     <View style={{ backgroundColor: "#f4f4f4", padding: 10 }}>
+  //       <Text style={{ fontWeight: "bold", color: "#5C6BC0" }}>
+  //         {section.title}
+  //       </Text>
+  //     </View>
+  //   );
+  // };
+
+  // console.log("AgendaList sections:", items);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -110,6 +112,7 @@ const Home: React.FC = () => {
           <AgendaList
             sections={items}
             renderItem={renderItem}
+            // renderSectionHeader={renderSectionHeader}
             theme={{
               agendaDayTextColor: "#5C6BC0",
               agendaDayNumColor: "#5C6BC0",
@@ -125,7 +128,7 @@ const Home: React.FC = () => {
       </CalendarProvider>
       <TouchableOpacity
         style={commonStyles.defaultFloatingButton}
-        onPress={() => console.log("Floating button pressed")}
+        onPress={() => navigation.navigate("CreateTask")}
       >
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
