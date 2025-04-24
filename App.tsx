@@ -60,7 +60,7 @@ function BottomTab() {
           tabBarIcon: ({ color, size }) => (
             <Entypo name="list" color={color} size={size} />
           ),
-          headerShown: false
+          
         }}
         />
   
