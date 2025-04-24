@@ -67,7 +67,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     loadItems(); // Load items when the component mounts
-  }, [items]);
+  }, []);
 
   const handleItemPress = (item: Task) => {
     console.log("Item pressed");
