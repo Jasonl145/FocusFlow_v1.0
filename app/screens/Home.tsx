@@ -1,4 +1,13 @@
-import { StyleSheet, TextInput, FlatList, TouchableOpacity, Text, SafeAreaView, View, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, 
+  TextInput, 
+  FlatList, 
+  TouchableOpacity, 
+  Text, 
+  SafeAreaView, 
+  View, 
+  TouchableWithoutFeedback,
+  
+ } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { db } from '../../FirebaseConfig';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
@@ -158,21 +167,40 @@ const Home = () => {
 
   
 
-  // const renderItem = ({ item }) => {
-  //   return (
-  //     <View>
-  //       <TouchableOpacity 
-  //       style={styles.item} 
-  //       onPress={() => handleTaskPress(item)}
-  //       >
-  //         <Text>{item.task}</Text>
-        
-  //       </TouchableOpacity>
-        
-  //     </View>
-    
-  //   );
-  // };
+  const renderTodoItem = ({ item }: { item: any }) => {
+    return (
+      <TouchableOpacity>
+        <View style={styles.todoContainer}>
+          <View>
+            <Text style={{ 
+              textDecorationLine: item.completed ? 'line-through' : 'none', 
+              flex: 1 
+            }}>
+              {item.task}
+            </Text>
+          </View>
+          <View style={styles.buttonGroup}>
+          <TouchableOpacity 
+            style={styles.testflatbutton} 
+            onPress={() => updateTodo(item.id, item.completed)}
+          >
+            <Text style={styles.buttonText}>
+              {item.completed ? <Ionicons name='refresh'></Ionicons> : <Ionicons name='checkmark-circle-outline'></Ionicons>}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.testflatbutton} 
+            onPress={() => deleteTodo(item.id)}
+          >
+            <Ionicons name='trash'></Ionicons>
+          </TouchableOpacity>
+          </View>
+
+        </View>
+      </TouchableOpacity>
+
+    );
+  };
  
 
   return (
@@ -191,41 +219,18 @@ const Home = () => {
             console.log(day);
           }}
         
-          
-          // markedDates={{
-          //   '2025-04-01': {selected: true, marked: true, selectedColor: 'blue'},
-          //   '2025-04-19': {marked: true},
-          //   '2025-04-25': {selected: true, marked: true, selectedColor: 'blue'}
-          // }}
- 
         />
-        {/* <AgendaList
-          
-          sections={getAgendaItems()}
-          renderItem={({ item }) => renderItem(item)}
-          keyExtractor={(item, index) => item.id || index.toString()}
-          
-        /> */}
+
         <SafeAreaView style={styles.safeArea}>
-      <View style={styles.testflatcontainer}>
-        
-        <FlatList
-          data={todos}
-          renderItem={({ item }) => (
-            <View style={styles.todoContainer}>
-              <Text style={{ textDecorationLine: item.completed ? 'line-through' : 'none', flex: 1 }}>{item.task}</Text>
-              <TouchableOpacity style={styles.testflatbutton} onPress={() => updateTodo(item.id, item.completed)}>
-                <Text style={styles.buttonText}>{item.completed ? "Undo" : "Complete"}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.testflatbutton} onPress={() => deleteTodo(item.id)}>
-                <Text style={styles.buttonText}>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          keyExtractor={(item) => item.id}
-        />
-      </View>
-    </SafeAreaView>
+          <View style={styles.testflatcontainer}>
+            
+            <FlatList
+              data={todos}
+              renderItem={renderTodoItem}
+              keyExtractor={(item) => item.id}
+            />
+          </View>
+        </SafeAreaView>
 
 
         
@@ -279,13 +284,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  item: {
-    backgroundColor: 'white',
-    padding: 15,
-    marginVertical: 5,
-    marginHorizontal: 10,
-    borderRadius: 5,
-  },
+
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -418,8 +417,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: 1,
     width: '100%',
+    padding: 20,
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "lightgrey",
   },
   testflatbutton: {
     padding: 10,
@@ -434,5 +437,9 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginLeft: 10,
   },
+  buttonGroup: {
+    flexDirection: 'row',
+  },
+  
   
 });
