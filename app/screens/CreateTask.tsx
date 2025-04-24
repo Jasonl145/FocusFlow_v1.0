@@ -43,7 +43,7 @@ const CreateTask: React.FC = () => {
           value={strictMode}
           onValueChange={setStrictMode}
           trackColor={{ false: "#9E9E9E", true: "#1A237E" }}
-          thumbColor={strictMode ? "#FAFAFA" : "#FAFAFA"}
+          thumbColor={"#FAFAFA"}
         />
         <Text style={styles.checkboxLabel}>Is this task strict?</Text>
       </View>

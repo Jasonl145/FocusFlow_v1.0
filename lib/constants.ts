@@ -1,6 +1,24 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StyleSheet } from "react-native";
 
+export const militaryToStandardTime = (time: string): string => {
+  const [hours, minutes] = time.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const standardHours = hours % 12 || 12; // Convert to 12-hour format
+  return `${standardHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+}
+
+export const standardToMilitaryTime = (time: string): string => {
+  const [timePart, period] = time.split(" ");
+  let [hours, minutes] = timePart.split(":").map(Number);
+  if (period === "PM" && hours < 12) {
+    hours += 12; // Convert PM to military time
+  } else if (period === "AM" && hours === 12) {
+    hours = 0; // Midnight case
+  }
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+}
+
 export const commonStyles = StyleSheet.create({
   title: {
     fontSize: 28, // A bit larger for a more striking appearance

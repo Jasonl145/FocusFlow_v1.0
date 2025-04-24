@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   SectionListData,
+  ActivityIndicator,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { CalendarProvider, AgendaList } from "react-native-calendars";
@@ -32,9 +33,11 @@ type sectionElement = {
 const Home: React.FC = () => {
   const navigation = useNavigation<TaskCreateNavigationProp>();
 
-  const [items, setItems] = useState<sectionElement[]>([]); // State for sections array
+  const [items, setItems] = useState<sectionElement[]>([]); // state for sections array
+  const [loading, setLoading] = useState<boolean>(true); // state for loading indicator
 
   const loadItems = () => {
+    setLoading(true);
     console.log("Loading items...");
     setTimeout(() => {
       const sections: sectionElement[] = [];
@@ -62,7 +65,9 @@ const Home: React.FC = () => {
       );
       console.log("Sections before setItems:", sections);
       setItems(sections);
+      setLoading(false);
     }, 1000);
+    // this function simulates a fetch call with a 1 second delay. we need to rewrite this to async await when we get the chance.
   };
 
   useEffect(() => {
@@ -108,7 +113,13 @@ const Home: React.FC = () => {
           console.log("Selected month:", month);
         }}
       >
-        {items.length > 0 ? (
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color="#1A237E"
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          />
+        ) : items.length > 0 ? (
           <AgendaList
             sections={items}
             renderItem={renderItem}

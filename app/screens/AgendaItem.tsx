@@ -8,7 +8,7 @@ import {
   Button,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Task } from "../../lib/constants";
+import { Task, militaryToStandardTime } from "../../lib/constants";
 
 interface TaskProps {
   item: Task;
@@ -29,8 +29,8 @@ const AgendaItem: React.FC<TaskProps & { onPress: () => void }> = ({ item, onPre
 
   return (
     <TouchableOpacity style={styles.item} onPress={onPress}>
-      <Text style={styles.itemHourText}>{item.start_time}</Text>
-      <Text style={styles.itemDurationText}>{item.end_time}</Text>
+      <Text style={styles.itemHourText}>{militaryToStandardTime(item.start_time || "")}</Text>
+      <Text style={styles.itemDurationText}>{militaryToStandardTime(item.end_time || "")}</Text>
       <Text style={styles.itemTitleText}>{item.name}</Text>
       <View style={styles.itemButtonContainer}>
         <Ionicons name="checkmark-circle" size={24} color="black" />
