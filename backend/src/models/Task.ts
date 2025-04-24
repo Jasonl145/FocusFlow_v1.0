@@ -1,5 +1,5 @@
 export interface Task { // <- Defining Task interface
-    id: string;
+    id: number; // Unique identifier for the task
     name: string;
     description: string;
     isImportant: boolean;

@@ -1,109 +1,70 @@
-import { View, Text, StyleSheet, TextInput, ActivityIndicator, SafeAreaView, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { firebase_auth } from '../../FirebaseConfig';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { commonStyles } from '../../lib/constants';
+import {
+  Text,
+  TextInput,
+  ActivityIndicator,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
+import React, { useState } from "react";
+import { firebase_auth } from "../../FirebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigation } from "@react-navigation/native";
+import { commonStyles, LoginScreenNavigationProp } from "../../lib/constants";
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  const navigation = useNavigation<LoginScreenNavigationProp>();
 
+  const signIn = async () => {
+    setLoading(true);
+    try {
+      const response = await signInWithEmailAndPassword(
+        firebase_auth,
+        email,
+        password
+      );
+      console.log(response);
+    } catch (error: any) {
+      console.log(error);
+      alert("Sign in failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const signIn = async () => {
-        setLoading(true);
-        try {
-          const response = await signInWithEmailAndPassword(firebase_auth, email, password)
-          console.log(response);
-        } catch (error: any) {
-          console.log(error)
-          alert('Sign in failed: ' + error.message);
-        } finally {
-            setLoading(false);
-        }
-      }
-    
-      const signUp = async () => {
-        setLoading(true);
-        try {
-          const response = await createUserWithEmailAndPassword(firebase_auth, email, password)
-          console.log(response);
-          alert('Check your email!');
-        } catch (error: any) {
-          console.log(error)
-          alert('Sign in failed: ' + error.message);
-        } finally {
-            setLoading(false)
-        }
-      }
-
-    return (
-    <SafeAreaView style={styles.container}>
-      
-      <Text style={commonStyles.title}>Login</Text>
-      <TextInput style={styles.textInput} placeholder="email" value={email} onChangeText={setEmail} />
-      <TextInput style={styles.textInput} placeholder="password" value={password} onChangeText={setPassword} secureTextEntry/>
-
-        { loading ? (<ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-            <>
-                <TouchableOpacity style={commonStyles.defaultButton} onPress={signIn}>
-                    <Text style={commonStyles.defaultButtonText}>Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={commonStyles.defaultButton} onPress={signUp}>
-                    <Text style={commonStyles.defaultButtonText}>Make Account</Text>
-                </TouchableOpacity>
-            </>
-        )}
-        
+  return (
+    <SafeAreaView style={commonStyles.defaultContainer}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <>
+          <Text style={commonStyles.title}>Login</Text>
+          <TextInput
+            style={commonStyles.defaultTextInput}
+            placeholder="email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={commonStyles.defaultTextInput}
+            placeholder="password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TouchableOpacity style={commonStyles.defaultButton} onPress={signIn}>
+            <Text style={commonStyles.text}>Login</Text>
+          </TouchableOpacity>
+          <Text onPress={() => navigation.navigate("Register")}>
+            Don't have an account? Register here
+          </Text>
+        </>
+      )}
     </SafeAreaView>
-    )
+  );
 };
 
-export default Login
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#FAFAFA', // A softer white for a modern, minimalist background
-    },
-    textInput: {
-      height: 50, // Standard height for elegance and simplicity
-      width: '90%', // Full width for a more expansive feel
-      backgroundColor: '#FFFFFF', // Pure white for contrast against the container
-      borderColor: '#E8EAF6', // A very light indigo border for subtle contrast
-      borderWidth: 2,
-      borderRadius: 15, // Softly rounded corners for a modern, friendly touch
-      marginVertical: 15,
-      paddingHorizontal: 25, // Generous padding for ease of text entry
-      fontSize: 16, // Comfortable reading size
-      color: '#3C4858', // A dark gray for readability with a hint of warmth
-      shadowColor: '#9E9E9E', // A medium gray shadow for depth
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 4,
-      elevation: 4, // Slightly elevated for a subtle 3D effect
-    },
-    button: {
-      width: '90%',
-      marginVertical: 15,
-      backgroundColor: '#5C6BC0', // A lighter indigo to complement the title color
-      padding: 20,
-      borderRadius: 15, // Matching rounded corners for consistency
-      alignItems: 'center',
-      justifyContent: 'center',
-      shadowColor: '#5C6BC0', // Shadow color to match the button for a cohesive look
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.4,
-      shadowRadius: 5,
-      elevation: 5,
-    },
-    text: {
-      color: '#FFFFFF', // Maintained white for clear visibility
-      fontSize: 18, // Slightly larger for emphasis
-      fontWeight: '600', // Semi-bold for a balanced weight
-    }
-  });
+export default Login;

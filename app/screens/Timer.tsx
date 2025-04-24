@@ -3,132 +3,46 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  View,
   StatusBar,
-  Platform,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker"; // Importing Picker for dropdowns
 import React, { useState, useEffect } from "react";
 import { commonStyles } from "../../lib/constants";
 
-const getRemainingTime = (time: number /* in seconds*/) => {
-  const hrs = Math.floor(time / 3600);
-  const mins = Math.floor((time % 3600) / 60); // Exclude hours portion
-  const secs = time % 60; // Correctly calculate remaining seconds
-  return { hrs, mins, secs };
-};
-// const formatNumber = (num: number) =>
-//   num >= 0 && num < 60 ? String(num).padStart(2, "0") : -1; // formats number for time. returns -1 if the number is above 59 or below 0.
-
-const createDropdownArrays = (numDistinctTimes: number) => {
-  // create arrays for the picker menus
-  let array = [];
-  for (let i = 0; i < numDistinctTimes; i++) {
-    array.push(i.toString()); // toString() for the picker
-  }
-  return array;
+const getRemainingTime = (time: number) => {
+  const mins = Math.floor(time / 60);
+  const secs = time - mins * 60;
+  return { mins, secs };
 };
 
-const secAndMinArray = createDropdownArrays(60); // 0-59, we can re-use this for 0-59 seconds and 0-59 minutes
-const hrsArray = createDropdownArrays(24); // 0-23, use this for 0-23 hours
 
 const Timer = () => {
-  const [hourTime, setHourTime] = useState<number>(0);
-  const [minTime, setMinTime] = useState<number>(0);
-  const [secTime, setSecTime] = useState<number>(0);
-  // hour, minute, second State
-
-  const calculateTimeInSeconds = (hrs: number, mins: number, secs: number) => {
-    return hrs * 3600 + mins * 60 + secs;
-  };
-
-  const [time, setTime] = useState<number>(
-    calculateTimeInSeconds(hourTime, minTime, secTime)
-  ); // Time State (IN SECONDS)
-
+  const [time, setTime] = useState<number>(0); // in seconds!!!
   const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [paused, setPaused] = useState<boolean>(false);
+  const hasRun = (time == 0) ? false : true;
 
-
-  const handleRunning = (val: boolean) => {
-    setIsRunning(val);
-  };
-
-  const createPicker = (
-    dropdownArray: string[],
-    timeVariable: number,
-    setTimeVariable: React.Dispatch<React.SetStateAction<number>>, // this means the type is a setter function
-    timeAbbreviation: string
-  ) => {
-    return (
-      <Picker
-        style={styles.picker}
-        selectedValue={timeVariable.toString()}
-        onValueChange={(itemValue) => setTimeVariable(Number(itemValue))}
-      >
-        {dropdownArray.map((timeUnit) => (
-          <Picker.Item
-            key={timeUnit}
-            value={timeUnit}
-            label={timeUnit + timeAbbreviation}
-          />
-        ))}
-      </Picker>
-    );
-  };
-
-  useEffect(() => {
-    // Update the total time in seconds whenever hrs, mins, or secs change
-    setTime(calculateTimeInSeconds(hourTime, minTime, secTime));
-  }, [hourTime, minTime, secTime]);
+  const handleToggleTimer = () => {
+    setIsRunning(!isRunning);
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={commonStyles.defaultContainer}>
+      {/*<StatusBar barStyle={"dark-content"}/> We could use this for dark mode (dark mode ? light-content : dark-content), so saving this here*/}
       <Text style={commonStyles.title}>Timer</Text>
-      {isRunning ? (
-        <>
-          <Text style={styles.time}>
-            {
-              `${String(Math.floor(time / 3600)).padStart(2, "0")}:${String(
-                Math.floor((time % 3600) / 60)
-              ).padStart(2, "0")}:${String(time % 60).padStart(2, "0")}`
-              /* THE ABOVE IS A FORMATTED VERSION OF THE TIME HH:MM:SS*/
-            }
-          </Text>
-          <TouchableOpacity
-            style={styles.resumeButton}
-            onPress={() => {
-              setPaused(!paused);
-              handleRunning(true);
-            }}
-          >
-            <Text style={commonStyles.defaultButtonText}>{paused ? "Resume timer" : "Pause timer"}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.stopButton}
-            onPress={() => handleRunning(false)}
-          >
-            <Text style={commonStyles.defaultButtonText}>Cancel timer</Text>
-          </TouchableOpacity>
-        </>
-      ) : (
-        // Hours picker, minute picker, seconds picker in order
-        <>
-          <View style={styles.setTimeContainer} aria-label="Set time">
-            {createPicker(hrsArray, hourTime, setHourTime, "h")}
-            <Text style={[commonStyles.title, styles.pushColonsDown]}>:</Text>
-            {createPicker(secAndMinArray, minTime, setMinTime, "m")}
-            <Text style={[commonStyles.title, styles.pushColonsDown]}>:</Text>
-            {createPicker(secAndMinArray, secTime, setSecTime, "s")}
-          </View>
-          <TouchableOpacity
-            style={commonStyles.defaultButton}
-            onPress={() => handleRunning(true)}
-          >
-            <Text style={commonStyles.defaultButtonText}>Start timer</Text>
-          </TouchableOpacity>
-        </>
-      )}
+      <TouchableOpacity style={commonStyles.defaultButton}>
+        <Text style={commonStyles.defaultButtonText}>Start timer</Text>
+      </TouchableOpacity>
+
+      {hasRun && (isRunning ? 
+      (
+        <TouchableOpacity onPress={handleToggleTimer} style={styles.stopButton}>
+          <Text style={commonStyles.defaultButtonText}>Stop timer</Text>
+        </TouchableOpacity>
+      ) : 
+      (
+        <TouchableOpacity onPress={handleToggleTimer} style={styles.resumeButton}>
+          <Text style={commonStyles.defaultButtonText}>Resume timer</Text>
+        </TouchableOpacity>
+      ))}
     </SafeAreaView>
   );
 };
@@ -136,12 +50,6 @@ const Timer = () => {
 export default Timer;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   stopButton: {
     width: "90%",
     marginVertical: 15,
@@ -169,38 +77,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 5,
     elevation: 5,
-  },
-  time: {
-    fontSize: 48,
-    fontWeight: "bold",
-    color: "#5C6BC0",
-    marginVertical: 20,
-  },
-  setTimeContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "90%",
-    marginVertical: 20,
-    padding: 20,
-    minHeight: 300,
-  },
-  picker: {
-    flex: 1,
-    maxWidth: 300,
-    zIndex: 1,
-  },
-  pickerItem: {
-    color: "#fff",
-    fontSize: 20,
-    ...Platform.select({
-      android: {
-        marginLeft: 10,
-        marginRight: 10,
-      },
-    }),
-  },
-  pushColonsDown: {
-    marginTop: 30,
   },
 });

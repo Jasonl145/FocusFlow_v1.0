@@ -1,17 +1,17 @@
 {
-    "compilerOptions": {
-      "target": "ES2020",
-      "module": "commonjs",
-      "rootDir": "./src",
-      "outDir": "./dist",
-      "esModuleInterop": true, //Somehow not working with index.ts and taskRoute.ts??
-      "strict": true,
-      "forceConsistentCasingInFileNames": true,
-      "moduleResolution": "node",
-      "skipLibCheck": true,
-      "resolveJsonModule": true,
-      "baseUrl": "./src"
-    },
-    "include": ["src/*/"],
-    "exclude": ["node_modules"]
-  }
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

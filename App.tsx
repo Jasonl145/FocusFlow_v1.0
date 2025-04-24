@@ -10,6 +10,7 @@ import Login from './app/screens/Login';
 import List from './app/screens/List';
 import Timer from './app/screens/Timer';
 import Home from './app/screens/Home';
+import TaskList from "./app/screens/TaskList";
 
 import {MaterialIcons, Entypo} from '@expo/vector-icons';
 
@@ -37,6 +38,18 @@ function BottomTab() {
         }}
         />
       
+      <Tabs.Screen
+        name="TaskList"
+        component={TaskList}
+        options={{
+          tabBarLabel: 'TaskList',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="task" color={color} size={size} />
+          ),
+          headerShown: false
+        }}
+      />
+
       <Tabs.Screen 
         name="Timer" 
         component={Timer} 
