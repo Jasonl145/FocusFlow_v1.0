@@ -10,7 +10,7 @@ import { StyleSheet,
  } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { db } from '../../FirebaseConfig';
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where, serverTimestamp, orderBy } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import {
   CalendarProvider,
@@ -98,8 +98,8 @@ const Home = () => {
     if (user) {
       const q = query(todosCollection, 
         where("userId", "==", user.uid),
-        where("date", "==", selectedDate)
-      
+        where("date", "==", selectedDate),
+        orderBy("createdAt", "asc")
       );
       const data = await getDocs(q);
       // Log raw documents from Firestore
@@ -110,12 +110,13 @@ const Home = () => {
       // Process the data
       const todosData = data.docs.map((doc) => ({ 
         ...doc.data(), 
-        id: doc.id 
+        id: doc.id, 
+        createdAt: doc.data().createdAt?.toDate()
       }));
       console.log("Processed todos data:");
       console.log(todosData);
 
-      setTodos(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setTodos(todosData);
     } else {
       console.log("No user logged in");
     }
@@ -123,8 +124,9 @@ const Home = () => {
 
   const addTodo = async () => {
     if (user) {
-      await addDoc(todosCollection, { task, completed: false, userId: user.uid, date: selectedDate});
+      await addDoc(todosCollection, { task, completed: false, userId: user.uid, date: selectedDate, createdAt: serverTimestamp()});
       setTask('');
+      setPopUpVisible(false);
       fetchTodos();
     } else {
       console.log("No user logged in");
@@ -228,6 +230,11 @@ const Home = () => {
               data={todos}
               renderItem={renderTodoItem}
               keyExtractor={(item) => item.id}
+              ListEmptyComponent={
+                <Text style={{ textAlign: 'center', marginTop: 20 }}>
+                  No todos found for this date
+                </Text>
+              }
             />
           </View>
         </SafeAreaView>
