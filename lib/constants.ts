@@ -143,6 +143,15 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     end_time: "16:00",
     strict: false,
   },
+  {
+    id: 4,
+    user_id: 1,
+    name: "Grocery shopping",
+    date: "2025-05-02",
+    start_time: "10:00",
+    end_time: "11:00",
+    strict: true,
+  },
 ];
 
 export const userTasks: userTasksType = {}; // change this to be pulled from db later

@@ -67,7 +67,7 @@ const Home: React.FC = () => {
       setItems(sections);
       setLoading(false);
     }, 1000);
-    // this function simulates a fetch call with a 1 second delay. we need to rewrite this to async await when we get the chance.
+    // this function simulates a fetch call with a 1 second delay. we need to rewrite this to async await when we get the chance. 
   };
 
   useEffect(() => {
