@@ -12,13 +12,13 @@ import CreateTask from "./app/screens/CreateTask";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { firebase_auth } from "./FirebaseConfig";
+import { OverlayProvider } from "./app/screens/lib/OverlayContext";
 
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
-const HomeStack = createNativeStackNavigator(); 
-
+const HomeStack = createNativeStackNavigator();
 
 function HomeStackNavigator() {
   return (
@@ -26,12 +26,12 @@ function HomeStackNavigator() {
       <HomeStack.Screen
         name="Home"
         component={Home}
-        options={{ headerShown: false }} 
+        options={{ headerShown: false }}
       />
       <HomeStack.Screen
         name="CreateTask"
         component={CreateTask}
-        options={{ title: "Create Task" }} 
+        options={{ title: "Create Task" }}
       />
     </HomeStack.Navigator>
   );
@@ -94,29 +94,31 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        {user ? (
-          <Stack.Screen
-            name="Tabs"
-            component={BottomTab}
-            options={{ headerShown: false }}
-          />
-        ) : (
-          <>
+    <OverlayProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Login">
+          {user ? (
             <Stack.Screen
-              name="Login"
-              component={Login}
+              name="Tabs"
+              component={BottomTab}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name="Register"
-              component={Register}
-              options={{ title: "Register" }}
-            />
-          </>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+          ) : (
+            <>
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Register"
+                component={Register}
+                options={{ title: "Register" }}
+              />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </OverlayProvider>
   );
 }
