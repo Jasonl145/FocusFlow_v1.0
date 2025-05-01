@@ -12,7 +12,7 @@ import CreateTask from "./app/screens/CreateTask";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { firebase_auth } from "./FirebaseConfig";
-import { OverlayProvider } from "./app/screens/lib/OverlayContext";
+import { OverlayProvider } from "./app/screens/components/OverlayContext";
 
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 

@@ -2,7 +2,7 @@ import { SafeAreaView, Text, Button, View, StyleSheet } from 'react-native'
 import React, { useContext } from 'react'
 import { NavigationProp } from '@react-navigation/native';
 import { firebase_auth } from '../../FirebaseConfig';
-import { OverlayContext } from './lib/OverlayContext'; 
+import { OverlayContext } from './components/OverlayContext'; 
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
