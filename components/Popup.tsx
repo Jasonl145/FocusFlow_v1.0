@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, memo } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,9 @@ import {
   StyleProp,
   ViewStyle,
   TextStyle,
+  Pressable,
+  Modal,
+  Keyboard,
 } from 'react-native';
 
 interface PopupProps {
@@ -22,7 +25,7 @@ interface PopupProps {
 }
 
 
-const Popup: React.FC<PopupProps> = ({
+const PopupCompnent: React.FC<PopupProps> = ({
     visible,
     onClose,
     onSubmit,
@@ -32,9 +35,26 @@ const Popup: React.FC<PopupProps> = ({
     confirmButton = ''
 }) => {
     if(!visible) return null;
-    
+
+    const handleClose = useCallback(() => {
+      Keyboard.dismiss();
+      onClose();
+    }, [onClose]);
+
+    const handleSubmit = useCallback(() => {
+      Keyboard.dismiss();
+      onSubmit();
+    }, [onSubmit]);
+      
     return (
-        <>
+      <Modal
+      visible={true}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={onClose}
+      >
+        <View style={[styles.overlay, { opacity: visible ? 1 : 0 }]} />
+        <View style={[styles.popupContainer, { display: visible ? 'flex' : 'none' }]}>
           {/* Transparent overlay that closes the popup when clicked */}
           <TouchableWithoutFeedback onPress={onClose}>
             <View style={styles.overlay} />
@@ -47,24 +67,33 @@ const Popup: React.FC<PopupProps> = ({
               placeholder='new task'
               value={value}
               onChangeText={onChangeText}
+              onLayout={(e) => console.log('Layout:', e.nativeEvent.layout)}
               />
 
-              <TouchableOpacity 
-                style={styles.closeButton}
-                onPress={onSubmit}
+              <Pressable
+                style={({ pressed }) => [
+                  styles.closeButton,
+                  { opacity: pressed ? 0.6 : 1 } 
+                ]}
+                
+                onPress={handleSubmit}
               >
                 <Text style={styles.closeButtonText}>{confirmButton}</Text>
-              </TouchableOpacity>
+              </Pressable>
               
-              <TouchableOpacity 
-                style={styles.closeButton}
-                onPress={onClose}
+              <Pressable
+                style={({ pressed }) => [
+                  styles.closeButton,
+                  { opacity: pressed ? 0.6 : 1 } 
+                ]}
+                onPress={handleClose}
               >
                 <Text style={styles.closeButtonText}>Close</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
-        </>
+        </View>
+      </Modal>
     )
 };
 
@@ -112,4 +141,4 @@ const styles = StyleSheet.create({
       },
 })
 
-export default Popup;
+export default memo(PopupCompnent);

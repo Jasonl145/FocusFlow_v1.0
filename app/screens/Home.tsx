@@ -6,9 +6,10 @@ import { StyleSheet,
   SafeAreaView, 
   View, 
   TouchableWithoutFeedback,
+  Pressable,
   
  } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { db } from '../../FirebaseConfig';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where, serverTimestamp, orderBy } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -44,6 +45,10 @@ const Home = () => {
   const user = auth.currentUser;
   const todosCollection = collection(db, 'todos');
 
+  const RefreshIcon = useMemo(() => <Ionicons name="refresh" size={20} />, []);
+  const CheckIcon = useMemo(() => <Ionicons name="checkmark-circle-outline" size={20} />, []);
+  const TrashIcon = useMemo(() => <Ionicons name="trash" size={20} />, []);
+  const AddIcon = useMemo(() => <Ionicons name="add" size={24} color="white" />, []);
 
   useEffect(() => {
     fetchTodos();
@@ -131,53 +136,113 @@ const Home = () => {
     setPopUpVisible(false);
   };
 
-  // This allows touches to pass through the popup's transparent areas
-  const handleOverlayPress = () => {
-    closePopup();
-  };
+  const handleClose = useCallback(() => {
+    if (isEditing) {
+      setIsEditing(false);
+      setEditTaskId('');
+      setEditTaskText('');
+    } else {
+      setPopUpVisible(false);
+    }
+  }, [isEditing]);
+  
+  const handleSubmit = useCallback(() => {
+    isEditing ? editTodo() : addTodo();
+  }, [isEditing, editTodo, addTodo]);
+  
+  const handleChangeText = useCallback((text: string) => {
+    isEditing ? setEditTaskText(text) : setTask(text);
+  }, [isEditing]);
 
   
-
-  const renderTodoItem = ({ item }: { item: any }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          setEditTaskId(item.id);
-          setEditTaskText(item.task);
-          setIsEditing(true);
-        }}
-      >
-        <View style={styles.todoContainer}>
-          <View>
-            <Text style={{ 
-              textDecorationLine: item.completed ? 'line-through' : 'none', 
-              flex: 1 
-            }}>
-              {item.task}
-            </Text>
-          </View>
-          <View style={styles.buttonGroup}>
-          <TouchableOpacity 
-            style={styles.testflatbutton} 
-            onPress={() => updateTodo(item.id, item.completed)}
-          >
-            <Text style={styles.buttonText}>
-              {item.completed ? <Ionicons name='refresh'></Ionicons> : <Ionicons name='checkmark-circle-outline'></Ionicons>}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.testflatbutton} 
-            onPress={() => deleteTodo(item.id)}
-          >
-            <Ionicons name='trash'></Ionicons>
-          </TouchableOpacity>
-          </View>
-
+  const renderItem = useCallback(({ item }) =>(
+    <Pressable
+      onPress={() => {
+        setEditTaskId(item.id);
+        setEditTaskText(item.task);
+        setIsEditing(true);
+      }}
+      style={({ pressed }) => [
+        { opacity: pressed ? 0.6 : 1 } 
+      ]}
+    >
+      <View style={styles.todoContainer}>
+        <View>
+          <Text style={{ 
+            textDecorationLine: item.completed ? 'line-through' : 'none', 
+            flex: 1 
+          }}>
+            {item.task}
+          </Text>
         </View>
-      </TouchableOpacity>
+        <View style={styles.buttonGroup}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.testflatbutton,
+            { opacity: pressed ? 0.6 : 1 } 
+          ]}
+          onPress={() => updateTodo(item.id, item.completed)}
+        >
+          <Text style={styles.buttonText}>
+            {item.completed ? RefreshIcon : CheckIcon}
+          </Text>
+        </Pressable>
+        <Pressable 
+          style={({ pressed }) => [
+            styles.testflatbutton,
+            { opacity: pressed ? 0.6 : 1 } 
+          ]}
+          onPress={() => deleteTodo(item.id)}
+        >
+          {TrashIcon}
+        </Pressable>
+        </View>
 
-    );
-  };
+      </View>
+    </Pressable>
+  ), []);
+
+
+  // const renderTodoItem = ({ item }: { item: any }) => {
+  //   return (
+  //     <TouchableOpacity
+  //       onPress={() => {
+  //         setEditTaskId(item.id);
+  //         setEditTaskText(item.task);
+  //         setIsEditing(true);
+  //       }}
+  //     >
+  //       <View style={styles.todoContainer}>
+  //         <View>
+  //           <Text style={{ 
+  //             textDecorationLine: item.completed ? 'line-through' : 'none', 
+  //             flex: 1 
+  //           }}>
+  //             {item.task}
+  //           </Text>
+  //         </View>
+  //         <View style={styles.buttonGroup}>
+  //         <TouchableOpacity 
+  //           style={styles.testflatbutton} 
+  //           onPress={() => updateTodo(item.id, item.completed)}
+  //         >
+  //           <Text style={styles.buttonText}>
+  //             {item.completed ? <Ionicons name='refresh'></Ionicons> : <Ionicons name='checkmark-circle-outline'></Ionicons>}
+  //           </Text>
+  //         </TouchableOpacity>
+  //         <TouchableOpacity 
+  //           style={styles.testflatbutton} 
+  //           onPress={() => deleteTodo(item.id)}
+  //         >
+  //           <Ionicons name='trash'></Ionicons>
+  //         </TouchableOpacity>
+  //         </View>
+
+  //       </View>
+  //     </TouchableOpacity>
+
+  //   );
+  // };
  
 
   return (
@@ -203,8 +268,16 @@ const Home = () => {
             
             <FlatList
               data={todos}
-              renderItem={renderTodoItem}
+              renderItem={renderItem}
               keyExtractor={(item) => item.id}
+              initialNumToRender={7}
+              maxToRenderPerBatch={5}
+              updateCellsBatchingPeriod={100}
+              windowSize={3}
+              removeClippedSubviews={true}
+              contentContainerStyle={{
+                paddingBottom: 60
+              }}
               ListEmptyComponent={
                 <Text style={{ textAlign: 'center', marginTop: 20 }}>
                   No todos found for this date
@@ -218,7 +291,7 @@ const Home = () => {
         
       </CalendarProvider>
       
-      <Popup
+      {/* <Popup
         visible={popUpVisible || isEditing}
         onClose={() => {
           if (isEditing) {
@@ -233,13 +306,25 @@ const Home = () => {
         value={isEditing ? editTaskText : task}
         onChangeText={(text) => isEditing ? setEditTaskText(text) : setTask(text)}
         confirmButton={isEditing ? "Edit" : "Create"}
+      /> */}
+      <Popup
+        visible={popUpVisible || isEditing}
+        onClose={handleClose}
+        onSubmit={handleSubmit}
+        value={isEditing ? editTaskText : task}
+        onChangeText={handleChangeText}
+        confirmButton={isEditing ? "Edit" : "Create"}
       />
               
-      <TouchableOpacity style={commonStyles.defaultFloatingButton}
+      <Pressable 
+        style={({ pressed }) => [
+          commonStyles.defaultFloatingButton,
+          { opacity: pressed ? 0.6 : 1 } 
+        ]}
           onPress={() => setPopUpVisible(true)}
         >
-          <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
+          {AddIcon}
+      </Pressable>
     </View>
   );
 }
