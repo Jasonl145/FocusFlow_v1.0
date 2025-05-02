@@ -1,19 +1,15 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Task, militaryToStandardTime } from "../../lib/constants";
 
 interface TaskProps {
   item: Task;
   onPress: () => void;
+  onCheckmarkPress: () => void;
 }
 
-const AgendaItem: React.FC<TaskProps> = ({ item, onPress }) => {
+const AgendaItem: React.FC<TaskProps> = ({ item, onPress, onCheckmarkPress }) => {
   if (!item || Object.keys(item).length === 0) {
     return (
       <View style={styles.emptyItem}>
@@ -26,14 +22,21 @@ const AgendaItem: React.FC<TaskProps> = ({ item, onPress }) => {
     <TouchableOpacity style={styles.item} onPress={onPress}>
       <View style={styles.itemTimeContainer}>
         <Text style={styles.itemTimeText}>
-          {militaryToStandardTime(item.start_time || "")} to {militaryToStandardTime(item.end_time || "")}
+          {militaryToStandardTime(item.start_time || "")} to{" "}
+          {militaryToStandardTime(item.end_time || "")}
         </Text>
       </View>
       <Text style={styles.itemTitleText}>{item.name}</Text>
       <View style={styles.itemButtonContainer}>
-        <Ionicons name="checkmark-circle" size={26} color="black" />
+        <TouchableOpacity onPress={onPress}>
+          {item.isCompleted ? (
+            <Ionicons name="checkmark-circle" size={26} color="black" />
+          ) : (
+            <Ionicons name="ellipse-outline" size={26} color="black" />
+          )}
+        </TouchableOpacity>
       </View>
-      { /* Change the checkmark button above to a complete toggle */ } 
+      {/* Change the checkmark button above to a complete toggle */}
     </TouchableOpacity>
   );
 };

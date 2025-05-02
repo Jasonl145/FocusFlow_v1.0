@@ -8,7 +8,7 @@ import List from "./app/screens/List";
 import Home from "./app/screens/Home";
 import Timer from "./app/screens/Timer";
 import CreateTask from "./app/screens/CreateTask";
-
+import EditTask from "./app/screens/EditTask";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { firebase_auth } from "./FirebaseConfig";
@@ -32,6 +32,11 @@ function HomeStackNavigator() {
         name="CreateTask"
         component={CreateTask}
         options={{ title: "Create Task" }} 
+      />
+      <HomeStack.Screen
+        name="EditTask"
+        component={EditTask as React.FC}
+        options={{ title: "Edit Task" }}
       />
     </HomeStack.Navigator>
   );

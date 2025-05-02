@@ -44,6 +44,7 @@ const CreateTask: React.FC = () => {
   const [taskStartTime, setTaskStartTime] = useState("");
   const [taskEndTime, setTaskEndTime] = useState("");
   const [taskStrict, setTaskStrict] = useState(false);
+  const [taskCompleted, setTaskCompleted] = useState(false);
 
   const handleSubmit = () => {
     // first, verify inputs
@@ -84,11 +85,16 @@ const CreateTask: React.FC = () => {
       return;
     }
 
+    // convert mmddyyyy to yyyy-mm-dd
+    const [month, day, year] = taskDate.split("/");
+    const isoDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+
+
     // create task object
     const task: Task = {
       user_id: user ? parseInt(user.uid) : 0, // replace with actual user ID from authentication
       name: taskName,
-      date: taskDate,
+      date: isoDate, // format in YYYY-MM-DD
       start_time:
         taskStartTime !== "" && taskStartTime !== null ? standardToMilitaryTime(taskStartTime) : null,
       end_time: taskEndTime !== "" && taskEndTime !== null ? standardToMilitaryTime(taskEndTime) : null,

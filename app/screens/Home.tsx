@@ -16,13 +16,7 @@ import {
 import AgendaItem from "./AgendaItem";
 import { useNavigation } from "@react-navigation/native";
 import { db } from "../../FirebaseConfig";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  orderBy,
-} from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, User } from "@firebase/auth";
 
 type sectionElement = {
@@ -48,51 +42,49 @@ const Home: React.FC = () => {
 
   const fetchTasks = async (currentUser: User) => {
     try {
-    console.log("BOMBOCLAAAAAT");
-    const dbQuery = query(
-      tasksCollection,
-      where("user_id", "==", currentUser.uid),
-      orderBy("date", "asc")
-    );
+      const dbQuery = query(
+        tasksCollection,
+        where("user_id", "==", currentUser.uid),
+        orderBy("date", "asc")
+      );
 
-    const data = await getDocs(dbQuery);
-    const tasksData = data.docs.map((doc) => (
-      {
-      id: doc.id,
-      ...doc.data(),
-    })) as unknown as Task[];
+      const data = await getDocs(dbQuery);
+      const tasksData = data.docs.map((doc) => ({
+        id: doc.id, // <-- this adds the Firestore document ID
+        ...doc.data(),
+      })) as unknown as (Task & { id: string })[];
+      console.log("~~~~~~~~\nSample fetched task:", tasksData[0], "\n~~~~~~~~");
 
-    // Group tasks by date
-    const grouped: { [date: string]: Task[] } = {};
-    tasksData.forEach((task) => {
-      if (!grouped[task.date]) grouped[task.date] = [];
-      grouped[task.date].push(task);
-    });
+      // Group tasks by date
+      const grouped: { [date: string]: Task[] } = {};
+      tasksData.forEach((task) => {
+        if (!grouped[task.date]) grouped[task.date] = [];
+        grouped[task.date].push(task);
+      });
 
-    console.log("Grouped Tasks: ", grouped);
+      console.log("Grouped Tasks: ", grouped);
 
-    // Convert to sectionElement[] and sort tasks by start_time
-    const sections: sectionElement[] = Object.entries(grouped).map(
-      ([date, tasks]) => ({
-        title: date,
-        data: tasks.sort((a, b) => {
-          if (!a.start_time) return 1;
-          if (!b.start_time) return -1;
-          return a.start_time.localeCompare(b.start_time);
-        }),
-      })
-    );
+      // Convert to sectionElement[] and sort tasks by start_time
+      const sections: sectionElement[] = Object.entries(grouped).map(
+        ([date, tasks]) => ({
+          title: date,
+          data: tasks.sort((a, b) => {
+            if (!a.start_time) return 1;
+            if (!b.start_time) return -1;
+            return a.start_time.localeCompare(b.start_time);
+          }),
+        })
+      );
 
-    // Sort sections by date ascending
-    sections.sort(
-      (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
-    );
+      // Sort sections by date ascending
+      sections.sort(
+        (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
+      );
 
-    setItems(sections);
-    console.log("________\n",items);
-    setLoading(false);
-    } 
-    catch (error) {
+      setItems(sections);
+      console.log("________\n", items);
+      setLoading(false);
+    } catch (error) {
       console.error("Error fetching tasks: ", error);
       setLoading(false);
     }
@@ -112,11 +104,18 @@ const Home: React.FC = () => {
   }, [user]);
 
   const handleItemPress = (item: Task) => {
-    // Add edit/delete logic here if needed
+    // Route to the EditTask screen with the selected task
+    navigation.navigate("EditTask", { task: item });
   };
 
   const renderItem = ({ item }: { item: Task }) => (
-    <AgendaItem item={item} onPress={() => handleItemPress(item)} />
+    <AgendaItem
+      item={item}
+      onPress={() => handleItemPress(item)}
+      onCheckmarkPress={() => {
+        item.isCompleted = !item.isCompleted;
+      }}
+    />
   );
 
   return (

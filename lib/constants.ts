@@ -96,13 +96,14 @@ type RootStackParamList = {
 
 export type TaskCreateNavigationProp = StackNavigationProp<TaskCreateStackParamList, 'Home'>
 
-type TaskCreateStackParamList = {
+export type TaskCreateStackParamList = {
   Home: undefined;
   CreateTask: undefined;
+  EditTask: { task: Task }; // Pass the task object to the EditTask screen
 }
 
 export type Task = {
-  // no ID because firestore will automatically generate one for us
+  id?: string;
   user_id: number;
   name: string;
   date: string;
