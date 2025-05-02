@@ -1,20 +1,16 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   SafeAreaView,
   Text,
   TouchableOpacity,
-  SectionListData,
   ActivityIndicator,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
 import { CalendarProvider, AgendaList } from "react-native-calendars";
-import { Card } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import {
   commonStyles,
   Task,
-  userTasks,
-  defaultTasks,
   TaskCreateNavigationProp,
 } from "../../lib/constants";
 import AgendaItem from "./AgendaItem";
@@ -22,17 +18,12 @@ import { useNavigation } from "@react-navigation/native";
 import { db } from "../../FirebaseConfig";
 import {
   collection,
-  addDoc,
   getDocs,
-  updateDoc,
-  deleteDoc,
-  doc,
   query,
   where,
-  serverTimestamp,
   orderBy,
 } from "firebase/firestore";
-import { getAuth } from "@firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "@firebase/auth";
 
 type sectionElement = {
   title: string;
@@ -41,106 +32,96 @@ type sectionElement = {
 
 const Home: React.FC = () => {
   const navigation = useNavigation<TaskCreateNavigationProp>();
-
-  const [items, setItems] = useState<sectionElement[]>([]); // state for sections array
-  const [loading, setLoading] = useState<boolean>(true); // state for loading indicator
+  const [items, setItems] = useState<sectionElement[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [user, setUser] = useState<User | null>(null);
 
   const auth = getAuth();
-  const user = auth.currentUser;
   const tasksCollection = collection(db, "tasks");
 
-  const fetchTasks = async () => {
-    setLoading(true);
-    if (user) {
-      const dbQuery = query(
-        tasksCollection,
-        where("user_id", "==", user.uid),
-        orderBy("date", "asc")
-      );
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return unsubscribe;
+  }, []);
 
-      const data = await getDocs(dbQuery);
-      const tasksData = data.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as unknown as Task[];
+  const fetchTasks = async (currentUser: User) => {
+    try {
+    console.log("BOMBOCLAAAAAT");
+    const dbQuery = query(
+      tasksCollection,
+      where("user_id", "==", currentUser.uid),
+      orderBy("date", "asc")
+    );
 
-      // Group tasks by date
-      const grouped: { [date: string]: Task[] } = {};
-      tasksData.forEach((task) => {
-        if (!grouped[task.date]) grouped[task.date] = [];
-        grouped[task.date].push(task);
-      });
+    const data = await getDocs(dbQuery);
+    const tasksData = data.docs.map((doc) => (
+      {
+      id: doc.id,
+      ...doc.data(),
+    })) as unknown as Task[];
 
-      // Convert to sectionElement[] and sort tasks by start_time
-      const sections: sectionElement[] = Object.entries(grouped).map(
-        ([date, tasks]) => ({
-          title: date,
-          data: tasks.sort((a, b) => {
-            // Compare start_time as strings (assumes format "HH:MM" or "HH:MM AM/PM")
-            if (!a.start_time) return 1;
-            if (!b.start_time) return -1;
-            return a.start_time.localeCompare(b.start_time);
-          }),
-        })
-      );
+    // Group tasks by date
+    const grouped: { [date: string]: Task[] } = {};
+    tasksData.forEach((task) => {
+      if (!grouped[task.date]) grouped[task.date] = [];
+      grouped[task.date].push(task);
+    });
 
-      // Sort sections by date ascending
-      sections.sort(
-        (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
-      );
+    console.log("Grouped Tasks: ", grouped);
 
-      setItems(sections);
-    } else {
-      console.log("No user logged in");
-      throw new Error("No user logged in");
-    }
+    // Convert to sectionElement[] and sort tasks by start_time
+    const sections: sectionElement[] = Object.entries(grouped).map(
+      ([date, tasks]) => ({
+        title: date,
+        data: tasks.sort((a, b) => {
+          if (!a.start_time) return 1;
+          if (!b.start_time) return -1;
+          return a.start_time.localeCompare(b.start_time);
+        }),
+      })
+    );
+
+    // Sort sections by date ascending
+    sections.sort(
+      (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
+    );
+
+    setItems(sections);
+    console.log("________\n",items);
     setLoading(false);
+    } 
+    catch (error) {
+      console.error("Error fetching tasks: ", error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchTasks();
-    setLoading(false);
+    if (user) {
+      setLoading(true);
+      const fetch = async () => {
+        await fetchTasks(user); // fetchTasks will setLoading(false) when done
+      };
+      fetch();
+    } else {
+      setItems([]);
+      setLoading(false);
+    }
   }, [user]);
 
   const handleItemPress = (item: Task) => {
-    console.log("Item pressed");
-    // add edit/delete screen later
+    // Add edit/delete logic here if needed
   };
 
-  const renderItem = ({ item }: { item: Task }) => {
-    return (
-      <AgendaItem
-        item={item}
-        onPress={() => {
-          handleItemPress(item);
-        }}
-      />
-    );
-  };
-
-  // const renderSectionHeader = ({ section }: { section: SectionListData<Task> }) => {
-  //   return (
-  //     <View style={{ backgroundColor: "#f4f4f4", padding: 10 }}>
-  //       <Text style={{ fontWeight: "bold", color: "#5C6BC0" }}>
-  //         {section.title}
-  //       </Text>
-  //     </View>
-  //   );
-  // };
-
-  // console.log("AgendaList sections:", items);
+  const renderItem = ({ item }: { item: Task }) => (
+    <AgendaItem item={item} onPress={() => handleItemPress(item)} />
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <CalendarProvider
-        date={new Date().toISOString()}
-        onDateChanged={(date) => {
-          console.log("Selected date:", date);
-        }}
-        onMonthChange={(month) => {
-          console.log("Selected month:", month);
-        }}
-      >
+      <CalendarProvider date={new Date().toISOString()}>
         {loading ? (
           <ActivityIndicator
             size="large"
@@ -151,7 +132,6 @@ const Home: React.FC = () => {
           <AgendaList
             sections={items}
             renderItem={renderItem}
-            // renderSectionHeader={renderSectionHeader}
             theme={{
               agendaDayTextColor: "#5C6BC0",
               agendaDayNumColor: "#5C6BC0",
@@ -183,43 +163,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
-// dummy code for when we used local array instead of database to test tasks
-// const loadItems = () => {
-
-//   setLoading(true);
-//   console.log("Loading items...");
-//   setTimeout(() => {
-//     const sections: sectionElement[] = [];
-
-//     if (Object.keys(userTasks).length === 0) {
-//       defaultTasks.forEach((task) => {
-//         if (!userTasks[task.date]) {
-//           userTasks[task.date] = [];
-//         }
-//         userTasks[task.date].push(task);
-//       });
-//     }
-
-//     Object.keys(userTasks).forEach((date) => {
-//       if (userTasks[date] && userTasks[date].length > 0) {
-//         sections.push({
-//           title: date,
-//           data: userTasks[date],
-//         });
-//       }
-//     });
-
-//     sections.sort(
-//       (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
-//     );
-//     console.log("Sections before setItems:", sections);
-//     setItems(sections);
-//     setLoading(false);
-//   }, 1000);
-//   // this function simulates a fetch call with a 1 second delay. we need to rewrite this to async await when we get the chance.
-// };
-
-// useEffect(() => {
-//   loadItems(); // Load items when the component mounts
-// }, []);

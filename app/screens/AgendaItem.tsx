@@ -1,28 +1,20 @@
 import React from "react";
 import {
   StyleSheet,
-  Alert,
   View,
   Text,
   TouchableOpacity,
-  Button,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Task, militaryToStandardTime } from "../../lib/constants";
 
 interface TaskProps {
   item: Task;
+  onPress: () => void;
 }
 
-const AgendaItem: React.FC<TaskProps & { onPress: () => void }> = ({
-  item,
-  onPress,
-}) => {
-  const isEmpty = (item: any) => {
-    return !item || Object.keys(item).length === 0;
-  };
-
-  if (isEmpty(item)) {
+const AgendaItem: React.FC<TaskProps> = ({ item, onPress }) => {
+  if (!item || Object.keys(item).length === 0) {
     return (
       <View style={styles.emptyItem}>
         <Text style={styles.emptyItemText}>No Events Planned Today</Text>
@@ -31,18 +23,17 @@ const AgendaItem: React.FC<TaskProps & { onPress: () => void }> = ({
   }
 
   return (
-    <TouchableOpacity style={[styles.item]} onPress={onPress}>
+    <TouchableOpacity style={styles.item} onPress={onPress}>
       <View style={styles.itemTimeContainer}>
-        <Text style={styles.itemFromTimeText}>
-          {militaryToStandardTime(item.start_time || "")} to{" "}
-          {militaryToStandardTime(item.end_time || "")}
+        <Text style={styles.itemTimeText}>
+          {militaryToStandardTime(item.start_time || "")} to {militaryToStandardTime(item.end_time || "")}
         </Text>
-        {/* <Text style={styles.itemToTimeText}>{militaryToStandardTime(item.end_time || "")}</Text> */}
       </View>
       <Text style={styles.itemTitleText}>{item.name}</Text>
       <View style={styles.itemButtonContainer}>
-        <Ionicons name="checkmark-circle" size={24} color="black" />
+        <Ionicons name="checkmark-circle" size={26} color="black" />
       </View>
+      { /* Change the checkmark button above to a complete toggle */ } 
     </TouchableOpacity>
   );
 };
@@ -59,24 +50,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   itemTimeContainer: {
-    width: 130, // Adjust as needed for time format
+    width: 120,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginRight: -10,
+    marginRight: -12,
   },
-  itemFromTimeText: {
+  itemTimeText: {
     fontSize: 12,
-    color: "black",
+    color: "#1A237E",
     textAlign: "left",
-    width: 125, // Adjust as needed
   },
   // itemToTimeText: {
   //   fontSize: 12,
   //   color: "grey",
   //   textAlign: "left",
-  //   marginLeft: 0,
-  //   width: 70, // Adjust as needed
+  //   marginLeft: 4,
+  //   width: 55,
   // },
   itemTitleText: {
     color: "black",
@@ -100,12 +90,4 @@ const styles = StyleSheet.create({
     color: "lightgrey",
     fontSize: 14,
   },
-  completedItem: {
-    backgroundColor: "#E0E0E0",
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgrey",
-    flexDirection: "row",
-    alignItems: "center",
-  }
 });

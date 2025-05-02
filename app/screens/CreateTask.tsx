@@ -8,7 +8,7 @@ import {
   Switch,
   TouchableOpacity,
 } from "react-native";
-import { commonStyles } from "../../lib/constants";
+import { commonStyles, standardToMilitaryTime } from "../../lib/constants";
 import { TaskCreateNavigationProp } from "../../lib/constants";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth } from "firebase/auth";
@@ -90,8 +90,8 @@ const CreateTask: React.FC = () => {
       name: taskName,
       date: taskDate,
       start_time:
-        taskStartTime !== "" && taskStartTime !== null ? taskStartTime : null,
-      end_time: taskEndTime !== "" && taskEndTime !== null ? taskEndTime : null,
+        taskStartTime !== "" && taskStartTime !== null ? standardToMilitaryTime(taskStartTime) : null,
+      end_time: taskEndTime !== "" && taskEndTime !== null ? standardToMilitaryTime(taskEndTime) : null,
       strict: !taskStartTime || !taskEndTime ? taskStrict : false, // strict mode only applies if start and end times are provided otherwise false
       isCompleted: false, // default false
     };
