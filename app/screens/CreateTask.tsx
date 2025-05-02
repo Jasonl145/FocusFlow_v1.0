@@ -56,9 +56,10 @@ const CreateTask: React.FC = () => {
       alert("Please enter a task date");
       return;
     }
-    const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/; // MM/DD/YYYY format
+    // Accept only YYYY-MM-DD format
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(taskDate)) {
-      alert("Please enter a valid date in MM/DD/YYYY format");
+      alert("Please enter a valid date in YYYY-MM-DD format");
       return;
     }
     if (
@@ -69,32 +70,42 @@ const CreateTask: React.FC = () => {
       return;
     }
     // parse for military time and for AM/PM
-    const timeRegex = /((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))/;
+    const timeRegex = /^(1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm])$/;
     const militaryTimeRegex = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
-    if (timeRegex.test(taskStartTime) && timeRegex.test(taskEndTime)) {
-      // pass
-    } else if (
-      militaryTimeRegex.test(taskStartTime) &&
-      militaryTimeRegex.test(taskEndTime)
+
+if (taskStartTime === "" && taskEndTime === "") {
+    // allow, do nothing
+  } else if (
+    (taskStartTime === "" && taskEndTime !== "") ||
+    (taskStartTime !== "" && taskEndTime === "")
+  ) {
+    alert("Please enter both start and end times or leave them blank");
+    return;
+  } else {
+    // Both are filled, check if both are military or both are standard
+    const startIsMilitary = militaryTimeRegex.test(taskStartTime);
+    const endIsMilitary = militaryTimeRegex.test(taskEndTime);
+    const startIsStandard = timeRegex.test(taskStartTime);
+    const endIsStandard = timeRegex.test(taskEndTime);
+
+    if (
+      (startIsMilitary && endIsMilitary) ||
+      (startIsStandard && endIsStandard)
     ) {
       // pass
     } else {
       alert(
-        "Please ensure your times are entered properly and in the same format."
+        "Please ensure both times are in the same format (either both 24-hour or both AM/PM)."
       );
       return;
     }
-
-    // convert mmddyyyy to yyyy-mm-dd
-    const [month, day, year] = taskDate.split("/");
-    const isoDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-
+  }
 
     // create task object
     const task: Task = {
       user_id: user ? parseInt(user.uid) : 0, // replace with actual user ID from authentication
       name: taskName,
-      date: isoDate, // format in YYYY-MM-DD
+      date: taskDate, // now in YYYY-MM-DD format
       start_time:
         taskStartTime !== "" && taskStartTime !== null ? standardToMilitaryTime(taskStartTime) : null,
       end_time: taskEndTime !== "" && taskEndTime !== null ? standardToMilitaryTime(taskEndTime) : null,
@@ -119,7 +130,7 @@ const CreateTask: React.FC = () => {
       <Text style={styles.labelText}>When do you want to do it?</Text>
       <TextInput
         style={commonStyles.defaultTextInput}
-        placeholder="Enter date (MM/DD/YYYY)"
+        placeholder="YYYY-MM-DD"
         onChange={(e) => setTaskDate(e.nativeEvent.text)}
         value={taskDate}
       />

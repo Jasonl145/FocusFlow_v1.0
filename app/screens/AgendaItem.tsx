@@ -1,15 +1,25 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  GestureResponderEvent,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Task, militaryToStandardTime } from "../../lib/constants";
 
 interface TaskProps {
   item: Task;
   onPress: () => void;
-  onCheckmarkPress: () => void;
+  onCheckmarkPress: (event: GestureResponderEvent) => void;
 }
 
-const AgendaItem: React.FC<TaskProps> = ({ item, onPress, onCheckmarkPress }) => {
+const AgendaItem: React.FC<TaskProps> = ({
+  item,
+  onPress,
+  onCheckmarkPress,
+}) => {
   if (!item || Object.keys(item).length === 0) {
     return (
       <View style={styles.emptyItem}>
@@ -19,16 +29,24 @@ const AgendaItem: React.FC<TaskProps> = ({ item, onPress, onCheckmarkPress }) =>
   }
 
   return (
-    <TouchableOpacity style={styles.item} onPress={onPress}>
-      <View style={styles.itemTimeContainer}>
+    <View style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.itemContent}
+        onPress={onPress}
+        activeOpacity={0.7}
+      >
+        { item.start_time && item.end_time ? (
         <Text style={styles.itemTimeText}>
-          {militaryToStandardTime(item.start_time || "")} to{" "}
-          {militaryToStandardTime(item.end_time || "")}
+          {militaryToStandardTime(item.start_time)} - {militaryToStandardTime(item.end_time)}
         </Text>
-      </View>
-      <Text style={styles.itemTitleText}>{item.name}</Text>
+        ) : (
+          <Text style={styles.itemTimeText}>No time set</Text>
+        )
+        }
+        <Text style={styles.itemTitleText}>{item.name}</Text>
+      </TouchableOpacity>
       <View style={styles.itemButtonContainer}>
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={onCheckmarkPress} activeOpacity={0.7}>
           {item.isCompleted ? (
             <Ionicons name="checkmark-circle" size={26} color="black" />
           ) : (
@@ -36,51 +54,44 @@ const AgendaItem: React.FC<TaskProps> = ({ item, onPress, onCheckmarkPress }) =>
           )}
         </TouchableOpacity>
       </View>
-      {/* Change the checkmark button above to a complete toggle */}
-    </TouchableOpacity>
+    </View>
   );
 };
 
 export default AgendaItem;
 
 const styles = StyleSheet.create({
-  item: {
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 20,
     backgroundColor: "white",
     borderBottomWidth: 1,
     borderBottomColor: "lightgrey",
-    flexDirection: "row",
-    alignItems: "center",
   },
-  itemTimeContainer: {
-    width: 120,
+  itemContent: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
-    marginRight: -12,
+    flex: 1,
+    width: 110,
   },
   itemTimeText: {
     fontSize: 12,
     color: "#1A237E",
     textAlign: "left",
+    marginRight: 12,
+    width: 110,
   },
-  // itemToTimeText: {
-  //   fontSize: 12,
-  //   color: "grey",
-  //   textAlign: "left",
-  //   marginLeft: 4,
-  //   width: 55,
-  // },
   itemTitleText: {
     color: "black",
-    marginLeft: 16,
     fontWeight: "bold",
     fontSize: 16,
     flexShrink: 1,
   },
   itemButtonContainer: {
-    flex: 1,
-    alignItems: "flex-end",
+    marginLeft: 12,
+    alignItems: "center",
+    justifyContent: "center",
   },
   emptyItem: {
     paddingLeft: 20,

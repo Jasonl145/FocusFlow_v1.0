@@ -16,8 +16,10 @@ import {
 import AgendaItem from "./AgendaItem";
 import { useNavigation } from "@react-navigation/native";
 import { db } from "../../FirebaseConfig";
-import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy, doc, updateDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, User } from "@firebase/auth";
+
+
 
 type sectionElement = {
   title: string;
@@ -90,6 +92,20 @@ const Home: React.FC = () => {
     }
   };
 
+  const handleCheckmarkPress = async (item: Task) => {
+    if (!item.id) return;
+    try {
+      await updateDoc(doc(db, "tasks", item.id), {
+        isCompleted: !item.isCompleted,
+      });
+      // Optionally, refresh tasks after update
+      if (user) fetchTasks(user);
+    } catch (e) {
+      alert("Failed to update task completion.");
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       setLoading(true);
@@ -112,8 +128,9 @@ const Home: React.FC = () => {
     <AgendaItem
       item={item}
       onPress={() => handleItemPress(item)}
-      onCheckmarkPress={() => {
-        item.isCompleted = !item.isCompleted;
+      onCheckmarkPress={(e) => {
+        e.stopPropagation(); // prevent parent (agendaItem itself) onPress function from opening EditTask component
+        handleCheckmarkPress(item);
       }}
     />
   );
