@@ -19,11 +19,20 @@ import {
 } from "../../lib/constants";
 import AgendaItem from "./AgendaItem";
 import { useNavigation } from "@react-navigation/native";
-
-const timeToString = (time: string) => {
-  const date = new Date(time);
-  return date.toISOString().split("T")[0];
-};
+import { db } from "../../FirebaseConfig";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  serverTimestamp,
+  orderBy,
+} from "firebase/firestore";
+import { getAuth } from "@firebase/auth";
 
 type sectionElement = {
   title: string;
@@ -36,43 +45,62 @@ const Home: React.FC = () => {
   const [items, setItems] = useState<sectionElement[]>([]); // state for sections array
   const [loading, setLoading] = useState<boolean>(true); // state for loading indicator
 
-  const loadItems = () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const tasksCollection = collection(db, "tasks");
+
+  const fetchTasks = async () => {
     setLoading(true);
-    console.log("Loading items...");
-    setTimeout(() => {
-      const sections: sectionElement[] = [];
+    if (user) {
+      const dbQuery = query(
+        tasksCollection,
+        where("user_id", "==", user.uid),
+        orderBy("date", "asc")
+      );
 
-      if (Object.keys(userTasks).length === 0) {
-        defaultTasks.forEach((task) => {
-          if (!userTasks[task.date]) {
-            userTasks[task.date] = [];
-          }
-          userTasks[task.date].push(task);
-        });
-      }
+      const data = await getDocs(dbQuery);
+      const tasksData = data.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as unknown as Task[];
 
-      Object.keys(userTasks).forEach((date) => {
-        if (userTasks[date] && userTasks[date].length > 0) {
-          sections.push({
-            title: date,
-            data: userTasks[date],
-          });
-        }
+      // Group tasks by date
+      const grouped: { [date: string]: Task[] } = {};
+      tasksData.forEach((task) => {
+        if (!grouped[task.date]) grouped[task.date] = [];
+        grouped[task.date].push(task);
       });
 
+      // Convert to sectionElement[] and sort tasks by start_time
+      const sections: sectionElement[] = Object.entries(grouped).map(
+        ([date, tasks]) => ({
+          title: date,
+          data: tasks.sort((a, b) => {
+            // Compare start_time as strings (assumes format "HH:MM" or "HH:MM AM/PM")
+            if (!a.start_time) return 1;
+            if (!b.start_time) return -1;
+            return a.start_time.localeCompare(b.start_time);
+          }),
+        })
+      );
+
+      // Sort sections by date ascending
       sections.sort(
         (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
       );
-      console.log("Sections before setItems:", sections);
+
       setItems(sections);
-      setLoading(false);
-    }, 1000);
-    // this function simulates a fetch call with a 1 second delay. we need to rewrite this to async await when we get the chance. 
+    } else {
+      console.log("No user logged in");
+      throw new Error("No user logged in");
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
-    loadItems(); // Load items when the component mounts
-  }, []);
+    fetchTasks();
+    setLoading(false);
+  }, [user]);
 
   const handleItemPress = (item: Task) => {
     console.log("Item pressed");
@@ -132,7 +160,14 @@ const Home: React.FC = () => {
             }}
           />
         ) : (
-          <Text style={{ textAlign: "center", marginTop: 20 }}>
+          <Text
+            style={{
+              textAlign: "center",
+              marginTop: 20,
+              fontSize: 18,
+              fontWeight: "bold",
+            }}
+          >
             No tasks available
           </Text>
         )}
@@ -148,3 +183,43 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+// dummy code for when we used local array instead of database to test tasks
+// const loadItems = () => {
+
+//   setLoading(true);
+//   console.log("Loading items...");
+//   setTimeout(() => {
+//     const sections: sectionElement[] = [];
+
+//     if (Object.keys(userTasks).length === 0) {
+//       defaultTasks.forEach((task) => {
+//         if (!userTasks[task.date]) {
+//           userTasks[task.date] = [];
+//         }
+//         userTasks[task.date].push(task);
+//       });
+//     }
+
+//     Object.keys(userTasks).forEach((date) => {
+//       if (userTasks[date] && userTasks[date].length > 0) {
+//         sections.push({
+//           title: date,
+//           data: userTasks[date],
+//         });
+//       }
+//     });
+
+//     sections.sort(
+//       (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
+//     );
+//     console.log("Sections before setItems:", sections);
+//     setItems(sections);
+//     setLoading(false);
+//   }, 1000);
+//   // this function simulates a fetch call with a 1 second delay. we need to rewrite this to async await when we get the chance.
+// };
+
+// useEffect(() => {
+//   loadItems(); // Load items when the component mounts
+// }, []);

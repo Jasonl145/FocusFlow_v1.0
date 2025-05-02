@@ -102,13 +102,14 @@ type TaskCreateStackParamList = {
 }
 
 export type Task = {
-  id: number;
+  // no ID because firestore will automatically generate one for us
   user_id: number;
   name: string;
   date: string;
-  start_time?: string;
-  end_time?: string;
+  start_time?: string | null;
+  end_time?: string | null;
   strict: boolean;
+  isCompleted?: boolean; // Optional property to indicate if the task is completed
 }
 
 type userTasksType = {
@@ -117,7 +118,6 @@ type userTasksType = {
 
 export const defaultTasks: Task[] = [ // tester tasks, delete later
   {
-    id: 1,
     user_id: 1,
     name: "Math exam",
     date: "2025-04-30", // YYYY-MM-DD format
@@ -126,7 +126,6 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     strict: false,
   },
   {
-    id: 2,
     user_id: 1,
     name: "Go to the gym",
     date: "2025-05-01",
@@ -135,7 +134,6 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     strict: true,
   },
   {
-    id: 3,
     user_id: 1,
     name: "Doctor's appointment",
     date: "2025-05-01",
@@ -144,12 +142,11 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     strict: false,
   },
   {
-    id: 4,
     user_id: 1,
     name: "Grocery shopping",
     date: "2025-05-02",
     start_time: "10:00",
-    end_time: "11:00",
+    end_time: "11:00",  
     strict: true,
   },
 ];

@@ -14,7 +14,10 @@ interface TaskProps {
   item: Task;
 }
 
-const AgendaItem: React.FC<TaskProps & { onPress: () => void }> = ({ item, onPress }) => {
+const AgendaItem: React.FC<TaskProps & { onPress: () => void }> = ({
+  item,
+  onPress,
+}) => {
   const isEmpty = (item: any) => {
     return !item || Object.keys(item).length === 0;
   };
@@ -28,9 +31,14 @@ const AgendaItem: React.FC<TaskProps & { onPress: () => void }> = ({ item, onPre
   }
 
   return (
-    <TouchableOpacity style={styles.item} onPress={onPress}>
-      <Text style={styles.itemHourText}>{militaryToStandardTime(item.start_time || "")}</Text>
-      <Text style={styles.itemDurationText}>{militaryToStandardTime(item.end_time || "")}</Text>
+    <TouchableOpacity style={[styles.item]} onPress={onPress}>
+      <View style={styles.itemTimeContainer}>
+        <Text style={styles.itemFromTimeText}>
+          {militaryToStandardTime(item.start_time || "")} to{" "}
+          {militaryToStandardTime(item.end_time || "")}
+        </Text>
+        {/* <Text style={styles.itemToTimeText}>{militaryToStandardTime(item.end_time || "")}</Text> */}
+      </View>
       <Text style={styles.itemTitleText}>{item.name}</Text>
       <View style={styles.itemButtonContainer}>
         <Ionicons name="checkmark-circle" size={24} color="black" />
@@ -48,21 +56,34 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "lightgrey",
     flexDirection: "row",
+    alignItems: "center",
   },
-  itemHourText: {
-    color: "black",
+  itemTimeContainer: {
+    width: 130, // Adjust as needed for time format
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginRight: -10,
   },
-  itemDurationText: {
-    color: "grey",
+  itemFromTimeText: {
     fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
+    color: "black",
+    textAlign: "left",
+    width: 125, // Adjust as needed
   },
+  // itemToTimeText: {
+  //   fontSize: 12,
+  //   color: "grey",
+  //   textAlign: "left",
+  //   marginLeft: 0,
+  //   width: 70, // Adjust as needed
+  // },
   itemTitleText: {
     color: "black",
     marginLeft: 16,
     fontWeight: "bold",
     fontSize: 16,
+    flexShrink: 1,
   },
   itemButtonContainer: {
     flex: 1,
@@ -79,4 +100,12 @@ const styles = StyleSheet.create({
     color: "lightgrey",
     fontSize: 14,
   },
+  completedItem: {
+    backgroundColor: "#E0E0E0",
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "lightgrey",
+    flexDirection: "row",
+    alignItems: "center",
+  }
 });
