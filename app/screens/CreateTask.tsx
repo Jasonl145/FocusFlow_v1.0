@@ -38,7 +38,7 @@ const CreateTask: React.FC = () => {
       // this else should never happen, but just in case
     }
   };
-  //const navigation = useNavigation<TaskCreateNavigationProp>();
+  const navigation = useNavigation<TaskCreateNavigationProp>();
   const [taskName, setTaskName] = useState("");
   const [taskDate, setTaskDate] = useState("");
   const [taskStartTime, setTaskStartTime] = useState("");
@@ -97,6 +97,8 @@ const CreateTask: React.FC = () => {
     };
     // create task in database
     createTodo(task);
+    // route to home screen
+    navigation.navigate("Home");
   };
 
   return (
