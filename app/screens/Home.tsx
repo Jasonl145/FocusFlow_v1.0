@@ -33,6 +33,10 @@ const Home = () => {
   const [selectedDate, setSelectedDate] = useState(timeToString(Date.now()));
   const [popUpVisible, setPopUpVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTaskId, setEditTaskId] = useState('');
+  const [editTaskText, setEditTaskText] = useState('');
   
   const [task, setTask] = useState('');
   const [todos, setTodos] = useState<any>([]);
@@ -93,6 +97,17 @@ const Home = () => {
     fetchTodos();
   };
 
+  const editTodo = async () => {
+    if (user && editTaskId) {
+      const todoDoc = doc(db, 'todos', editTaskId);
+      await updateDoc(todoDoc, { task: editTaskText });
+      setEditTaskId('');
+      setEditTaskText('');
+      setIsEditing(false);
+      fetchTodos();
+    }
+  };
+
   const deleteTodo = async (id: string) => {
     const todoDoc = doc(db, 'todos', id);
     await deleteDoc(todoDoc);
@@ -126,7 +141,11 @@ const Home = () => {
   const renderTodoItem = ({ item }: { item: any }) => {
     return (
       <TouchableOpacity
-        
+        onPress={() => {
+          setEditTaskId(item.id);
+          setEditTaskText(item.task);
+          setIsEditing(true);
+        }}
       >
         <View style={styles.todoContainer}>
           <View>
@@ -200,11 +219,19 @@ const Home = () => {
       </CalendarProvider>
       
       <Popup
-        visible={popUpVisible}
-        onClose={closePopup}
-        onSubmit={addTodo}
-        value={task}
-        onChangeText={(text) => setTask(text)}
+        visible={popUpVisible || isEditing}
+        onClose={() => {
+          if (isEditing) {
+            setIsEditing(false);
+            setEditTaskId('');
+            setEditTaskText('');
+          } else {
+            setPopUpVisible(false);
+          }
+        }}
+        onSubmit={isEditing ? editTodo : addTodo}
+        value={isEditing ? editTaskText : task}
+        onChangeText={(text) => isEditing ? setEditTaskText(text) : setTask(text)}
       />
               
       <TouchableOpacity style={commonStyles.defaultFloatingButton}
