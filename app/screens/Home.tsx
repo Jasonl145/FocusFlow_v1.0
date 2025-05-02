@@ -232,6 +232,7 @@ const Home = () => {
         onSubmit={isEditing ? editTodo : addTodo}
         value={isEditing ? editTaskText : task}
         onChangeText={(text) => isEditing ? setEditTaskText(text) : setTask(text)}
+        confirmButton={isEditing ? "Edit" : "Create"}
       />
               
       <TouchableOpacity style={commonStyles.defaultFloatingButton}

@@ -18,6 +18,7 @@ interface PopupProps {
     value: string;
     onChangeText: (text: string) => void;
     placeholder?: string;
+    confirmButton?: string;
 }
 
 
@@ -28,6 +29,7 @@ const Popup: React.FC<PopupProps> = ({
     value,
     onChangeText,
     placeholder = 'new task',
+    confirmButton = ''
 }) => {
     if(!visible) return null;
     
@@ -51,7 +53,7 @@ const Popup: React.FC<PopupProps> = ({
                 style={styles.closeButton}
                 onPress={onSubmit}
               >
-                <Text style={styles.closeButtonText}>create</Text>
+                <Text style={styles.closeButtonText}>{confirmButton}</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
