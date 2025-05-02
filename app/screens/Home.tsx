@@ -19,56 +19,10 @@ import {
 } from 'react-native-calendars';
 import { commonStyles } from '../../lib/constants';
 import { Ionicons } from '@expo/vector-icons';
+import Popup from '../../components/Popup';
 
 
 
-const agendaItems = [
-  // {
-  //   title: '2025-04-19',
-  //   data: [
-  //     { hour: '12:00', duration: '1h', title: 'Meeting with team' },
-  //     { hour: '14:00', duration: '30m', title: 'Doctor appointment' }
-  //   ]
-  // },
-  // {
-  //   title: '2025-04-20',
-  //   data: [
-  //     { hour: '09:00', duration: '1h', title: 'Morning workout' }
-  //   ]
-  // },
-  // {
-  //   title: '2025-04-22',
-  //   data: [
-  //     { hour: '12:00', duration: '1h', title: 'Meeting with team' },
-  //     { hour: '14:00', duration: '30m', title: 'Doctor appointment' }
-  //   ]
-  // },
-  // {
-  //   title: '2025-04-23',
-  //   data: [
-  //     { hour: '09:00', duration: '1h', title: 'Morning workout' }
-  //   ]
-  // },
-  // {
-  //   title: '2025-04-24',
-  //   data: [
-  //     { hour: '12:00', duration: '1h', title: 'Meeting with team' },
-  //     { hour: '14:00', duration: '30m', title: 'Doctor appointment' }
-  //   ]
-  // },
-  // {
-  //   title: '2025-04-25',
-  //   data: [
-  //     { hour: '09:00', duration: '1h', title: 'Morning workout' }
-  //   ]
-  // },
-  // {
-  //   title: '2025-04-23',
-  //   data: [
-  //     { hour: '09:00', duration: '1h', title: 'Morning workout' }
-  //   ]
-  // },
-];
 
 
 const timeToString = (time) => {
@@ -171,7 +125,9 @@ const Home = () => {
 
   const renderTodoItem = ({ item }: { item: any }) => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        
+      >
         <View style={styles.todoContainer}>
           <View>
             <Text style={{ 
@@ -242,40 +198,15 @@ const Home = () => {
 
         
       </CalendarProvider>
-
-      {popUpVisible && (
-        <>
-          {/* Transparent overlay that closes the popup when clicked */}
-          <TouchableWithoutFeedback onPress={handleOverlayPress}>
-            <View style={styles.overlay} />
-          </TouchableWithoutFeedback>
-
-          {/* The actual popup content */}
-          <View style={styles.popupContainer}>
-            <View style={styles.popup}>
-              <TextInput
-              placeholder='new task'
-              value={task}
-              onChangeText={(text) => setTask(text)}
-              />
-
-              <TouchableOpacity 
-                style={styles.closeButton}
-                onPress={addTodo}
-              >
-                <Text style={styles.closeButtonText}>create</Text>
-              </TouchableOpacity>
+      
+      <Popup
+        visible={popUpVisible}
+        onClose={closePopup}
+        onSubmit={addTodo}
+        value={task}
+        onChangeText={(text) => setTask(text)}
+      />
               
-              <TouchableOpacity 
-                style={styles.closeButton}
-                onPress={closePopup}
-              >
-                <Text style={styles.closeButtonText}>Close</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </>
-      )}
       <TouchableOpacity style={commonStyles.defaultFloatingButton}
           onPress={() => setPopUpVisible(true)}
         >
