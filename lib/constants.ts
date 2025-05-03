@@ -54,7 +54,18 @@ export const commonStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 4, // Slightly elevated for a subtle 3D effect
-  }
+  },
+  defaultFloatingButton: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "#5C6BC0", // A lighter indigo to complement the title color
+    width: 60,
+    height: 60,
+    borderRadius: 30, // Fully rounded for a modern look
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
@@ -64,3 +75,56 @@ type RootStackParamList = {
   Login: undefined;
   Register: undefined;
 }; // All pages needed for login/register navigation. 'Undefined' because the pages do not need any extra parameters
+
+export type TaskCreateNavigationProp = StackNavigationProp<TaskCreateStackParamList, 'Home'>
+
+type TaskCreateStackParamList = {
+  Home: undefined;
+  CreateTask: undefined;
+}
+
+export type Task = {
+  id: number;
+  user_id: number;
+  name: string;
+  date: string;
+  start_time?: string;
+  end_time?: string;
+  strict: boolean;
+}
+
+type userTasksType = {
+  [key: string]: Task[]; // key = date,
+}
+
+export const defaultTasks: Task[] = [ // tester tasks, delete later
+  {
+    id: 1,
+    user_id: 1,
+    name: "Math exam",
+    date: "2025-04-30", // YYYY-MM-DD format
+    start_time: "09:00",
+    end_time: "10:00",
+    strict: false,
+  },
+  {
+    id: 2,
+    user_id: 1,
+    name: "Go to the gym",
+    date: "2025-05-01",
+    start_time: "12:00",
+    end_time: "13:00", // military time format, we can convert later but this makes it easier to do comparisons by time for sorting
+    strict: true,
+  },
+  {
+    id: 3,
+    user_id: 1,
+    name: "Doctor's appointment",
+    date: "2025-05-01",
+    start_time: "15:00",
+    end_time: "16:00",
+    strict: false,
+  },
+];
+
+export const userTasks: userTasksType = {}; // change this to be pulled from db later

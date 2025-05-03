@@ -1,67 +1,139 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { Agenda } from 'react-native-calendars';
-import { Card } from 'react-native-paper';
+import {
+  View,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  SectionListData,
+} from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { CalendarProvider, AgendaList } from "react-native-calendars";
+import { Card } from "react-native-paper";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  commonStyles,
+  Task,
+  userTasks,
+  defaultTasks,
+  TaskCreateNavigationProp,
+} from "../../lib/constants";
+import AgendaItem from "./AgendaItem";
+import { useNavigation } from "@react-navigation/native";
 
-const timeToString = (time) => {
+const timeToString = (time: string) => {
   const date = new Date(time);
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 };
 
+type sectionElement = {
+  title: string;
+  data: Task[];
+};
 
 const Home: React.FC = () => {
-  const [items, setItems] = useState({});
+  const navigation = useNavigation<TaskCreateNavigationProp>();
 
-  const loadItems = (day) => {
+  const [items, setItems] = useState<sectionElement[]>([]); // State for sections array
+
+  const loadItems = () => {
+    console.log("Loading items...");
     setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = timeToString(time);
-        if (!items[strTime]) {
-          items[strTime] = [];
-          const numItems = Math.floor(Math.random() * 3 + 1);
-          for (let j = 0; j < numItems; j++) {
-            items[strTime].push({
-              name: 'Item for ' + strTime + ' #' + j,
-              height: Math.max(50, Math.floor(Math.random() * 150)),
-            });
+      const sections: sectionElement[] = [];
+
+      if (Object.keys(userTasks).length === 0) {
+        defaultTasks.forEach((task) => {
+          if (!userTasks[task.date]) {
+            userTasks[task.date] = [];
           }
-        }
+          userTasks[task.date].push(task);
+        });
       }
-      const newItems = {};
-      Object.keys(items).forEach((key) => {
-        newItems[key] = items[key];
+
+      Object.keys(userTasks).forEach((date) => {
+        if (userTasks[date] && userTasks[date].length > 0) {
+          sections.push({
+            title: date,
+            data: userTasks[date],
+          });
+        }
       });
-      setItems(newItems);
+
+      sections.sort(
+        (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
+      );
+      console.log("Sections before setItems:", sections);
+      setItems(sections);
     }, 1000);
   };
 
-  const renderItem = (item) => {
-    return (<TouchableOpacity style={{marginRight: 10, marginTop: 17}}>
-      <Card>
-        <Card.Content>
-          <View style={{
-            flexDirection: 'row',
-            justifyContent:'space-between',
-            alignItems: 'center'
-          }}>
-            <Text>{item.name}</Text>
-          </View>
-        </Card.Content>
-      </Card>
-    </TouchableOpacity>)
-  }
+  useEffect(() => {
+    loadItems(); // Load items when the component mounts
+  }, []);
+
+  const handleItemPress = (item: Task) => {
+    console.log("Item pressed");
+    // add edit/delete screen later
+  };
+
+  const renderItem = ({ item }: { item: Task }) => {
+    return (
+      <AgendaItem
+        item={item}
+        onPress={() => {
+          handleItemPress(item);
+        }}
+      />
+    );
+  };
+
+  // const renderSectionHeader = ({ section }: { section: SectionListData<Task> }) => {
+  //   return (
+  //     <View style={{ backgroundColor: "#f4f4f4", padding: 10 }}>
+  //       <Text style={{ fontWeight: "bold", color: "#5C6BC0" }}>
+  //         {section.title}
+  //       </Text>
+  //     </View>
+  //   );
+  // };
+
+  // console.log("AgendaList sections:", items);
 
   return (
-    <View style={{flex: 1}}>
-      <Agenda
-        items={items}
-        loadItemsForMonth={loadItems}
-        selected={'2025-04-13'}
-        renderItem={renderItem}
-        />
-    </View>
-  )
-}
+    <SafeAreaView style={{ flex: 1 }}>
+      <CalendarProvider
+        date={new Date().toISOString()}
+        onDateChanged={(date) => {
+          console.log("Selected date:", date);
+        }}
+        onMonthChange={(month) => {
+          console.log("Selected month:", month);
+        }}
+      >
+        {items.length > 0 ? (
+          <AgendaList
+            sections={items}
+            renderItem={renderItem}
+            // renderSectionHeader={renderSectionHeader}
+            theme={{
+              agendaDayTextColor: "#5C6BC0",
+              agendaDayNumColor: "#5C6BC0",
+              agendaTodayColor: "#5C6BC0",
+              agendaKnobColor: "#5C6BC0",
+            }}
+          />
+        ) : (
+          <Text style={{ textAlign: "center", marginTop: 20 }}>
+            No tasks available
+          </Text>
+        )}
+      </CalendarProvider>
+      <TouchableOpacity
+        style={commonStyles.defaultFloatingButton}
+        onPress={() => navigation.navigate("CreateTask")}
+      >
+        <Ionicons name="add" size={24} color="white" />
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+};
 
-export default Home
+export default Home;
