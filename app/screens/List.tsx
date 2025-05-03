@@ -10,7 +10,7 @@ interface RouterProps {
 const List = ({ navigation }: RouterProps) => {
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{marginTop:100}}>
       <Button onPress={() => firebase_auth.signOut()} title="Sign Out" />
       <Button onPress={() => navigation.navigate('Home')} title="Explore" />
     </SafeAreaView>
