@@ -67,7 +67,7 @@ const Profile = ({ navigation }: RouterProps) => {
       {/* Custom Buttons */}
       <TouchableOpacity
         style={[styles.button, styles.exploreButton]}
-        onPress={() => navigation.navigate("Home")}
+        onPress={() => navigation.navigate("HomeTab")} // Navigate to "HomeTab"
       >
         <Text style={styles.buttonText}>Explore</Text>
       </TouchableOpacity>
