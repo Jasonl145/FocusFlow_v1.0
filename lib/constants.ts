@@ -1,6 +1,24 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import { StyleSheet } from "react-native";
 
+export const militaryToStandardTime = (time: string): string => {
+  const [hours, minutes] = time.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const standardHours = hours % 12 || 12; // Convert to 12-hour format
+  return `${standardHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+}
+
+export const standardToMilitaryTime = (time: string): string => {
+  const [timePart, period] = time.split(" ");
+  let [hours, minutes] = timePart.split(":").map(Number);
+  if (period === "PM" && hours < 12) {
+    hours += 12; // Convert PM to military time
+  } else if (period === "AM" && hours === 12) {
+    hours = 0; // Midnight case
+  }
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+}
+
 export const commonStyles = StyleSheet.create({
   title: {
     fontSize: 28, // A bit larger for a more striking appearance
@@ -78,19 +96,21 @@ type RootStackParamList = {
 
 export type TaskCreateNavigationProp = StackNavigationProp<TaskCreateStackParamList, 'Home'>
 
-type TaskCreateStackParamList = {
+export type TaskCreateStackParamList = {
   Home: undefined;
   CreateTask: undefined;
+  EditTask: { task: Task }; // Pass the task object to the EditTask screen
 }
 
 export type Task = {
-  id: number;
+  id?: string;
   user_id: number;
   name: string;
   date: string;
-  start_time?: string;
-  end_time?: string;
+  start_time?: string | null;
+  end_time?: string | null;
   strict: boolean;
+  isCompleted?: boolean; // Optional property to indicate if the task is completed
 }
 
 type userTasksType = {
@@ -99,7 +119,6 @@ type userTasksType = {
 
 export const defaultTasks: Task[] = [ // tester tasks, delete later
   {
-    id: 1,
     user_id: 1,
     name: "Math exam",
     date: "2025-04-30", // YYYY-MM-DD format
@@ -108,7 +127,6 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     strict: false,
   },
   {
-    id: 2,
     user_id: 1,
     name: "Go to the gym",
     date: "2025-05-01",
@@ -117,13 +135,20 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     strict: true,
   },
   {
-    id: 3,
     user_id: 1,
     name: "Doctor's appointment",
     date: "2025-05-01",
     start_time: "15:00",
     end_time: "16:00",
     strict: false,
+  },
+  {
+    user_id: 1,
+    name: "Grocery shopping",
+    date: "2025-05-02",
+    start_time: "10:00",
+    end_time: "11:00",  
+    strict: true,
   },
 ];
 

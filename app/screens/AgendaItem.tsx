@@ -1,25 +1,26 @@
 import React from "react";
 import {
   StyleSheet,
-  Alert,
   View,
   Text,
   TouchableOpacity,
-  Button,
+  GestureResponderEvent,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Task } from "../../lib/constants";
+import { Task, militaryToStandardTime } from "../../lib/constants";
 
 interface TaskProps {
   item: Task;
+  onPress: () => void;
+  onCheckmarkPress: (event: GestureResponderEvent) => void;
 }
 
-const AgendaItem: React.FC<TaskProps & { onPress: () => void }> = ({ item, onPress }) => {
-  const isEmpty = (item: any) => {
-    return !item || Object.keys(item).length === 0;
-  };
-
-  if (isEmpty(item)) {
+const AgendaItem: React.FC<TaskProps> = ({
+  item,
+  onPress,
+  onCheckmarkPress,
+}) => {
+  if (!item || Object.keys(item).length === 0) {
     return (
       <View style={styles.emptyItem}>
         <Text style={styles.emptyItemText}>No Events Planned Today</Text>
@@ -28,45 +29,70 @@ const AgendaItem: React.FC<TaskProps & { onPress: () => void }> = ({ item, onPre
   }
 
   return (
-    <TouchableOpacity style={styles.item} onPress={onPress}>
-      <Text style={styles.itemHourText}>{item.start_time}</Text>
-      <Text style={styles.itemDurationText}>{item.end_time}</Text>
-      <Text style={styles.itemTitleText}>{item.name}</Text>
+    <View style={styles.itemContainer}>
+      <TouchableOpacity
+        style={styles.itemContent}
+        onPress={onPress}
+        activeOpacity={0.7}
+      >
+        { item.start_time && item.end_time ? (
+        <Text style={styles.itemTimeText}>
+          {militaryToStandardTime(item.start_time)} - {militaryToStandardTime(item.end_time)}
+        </Text>
+        ) : (
+          <Text style={styles.itemTimeText}>No time set</Text>
+        )
+        }
+        <Text style={styles.itemTitleText}>{item.name}</Text>
+      </TouchableOpacity>
       <View style={styles.itemButtonContainer}>
-        <Ionicons name="checkmark-circle" size={24} color="black" />
+        <TouchableOpacity onPress={onCheckmarkPress} activeOpacity={0.7}>
+          {item.isCompleted ? (
+            <Ionicons name="checkmark-circle" size={26} color="black" />
+          ) : (
+            <Ionicons name="ellipse-outline" size={26} color="black" />
+          )}
+        </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
 export default AgendaItem;
 
 const styles = StyleSheet.create({
-  item: {
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 20,
     backgroundColor: "white",
     borderBottomWidth: 1,
     borderBottomColor: "lightgrey",
+  },
+  itemContent: {
     flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    width: 120,
   },
-  itemHourText: {
-    color: "black",
-  },
-  itemDurationText: {
-    color: "grey",
+  itemTimeText: {
     fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
+    color: "#1A237E",
+    textAlign: "center",
+    marginRight: 12,
+    width: 120,
   },
   itemTitleText: {
     color: "black",
-    marginLeft: 16,
     fontWeight: "bold",
     fontSize: 16,
+    flexShrink: 1,
+    marginLeft: -1,
   },
   itemButtonContainer: {
-    flex: 1,
-    alignItems: "flex-end",
+    marginLeft: 12,
+    alignItems: "center",
+    justifyContent: "center",
   },
   emptyItem: {
     paddingLeft: 20,
