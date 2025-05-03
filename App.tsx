@@ -6,6 +6,7 @@ import Login from "./app/screens/Login";
 import Profile from "./app/screens/Profile";
 import Register from "./app/screens/Register";
 import Home from "./app/screens/Home";
+import Tasks from "./app/screens/Tasks";
 import Timer from "./app/screens/Timer";
 import CreateTask from "./app/screens/CreateTask";
 import EditTask from "./app/screens/EditTask";
@@ -57,6 +58,17 @@ function BottomTab() {
           tabBarLabel: "Home",
           tabBarIcon: ({ color, size }) => (
             <Entypo name="calendar" color={color} size={size} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="Tasks"
+        component={Tasks} 
+        options={{
+          tabBarLabel: "Tasks",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="list" color={color} size={size} />
           ),
           headerShown: false,
         }}
