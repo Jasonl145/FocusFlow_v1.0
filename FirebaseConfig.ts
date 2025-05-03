@@ -7,7 +7,7 @@ import credentials from "./credentials.json";
 
 
 const firebaseConfig = {
-  //add your configs/api key here
+  // refactored this to use a json file instead of .env file -- need to delete react dotenv packages later?
   apiKey: credentials.REACT_APP_API_KEY,
   authDomain: credentials.REACT_APP_AUTH_DOMAIN,
   projectId: credentials.REACT_APP_PROJECT_ID,
