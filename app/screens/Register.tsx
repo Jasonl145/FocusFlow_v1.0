@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import Logo from "../../assets/Logo.svg"; // Import the SVG logo
 import React, { useState } from "react";
 import { firebase_auth } from "../../FirebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -18,17 +19,17 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const navigation = useNavigation<LoginScreenNavigationProp>(); // The prop we made now tells the code that we can access either Login or Register with no extra parameters needed.
+  const navigation = useNavigation<LoginScreenNavigationProp>();
 
   const signUp = async () => {
     setLoading(true);
     try {
       if (password === confirmPassword && password.length < 7) {
-        Alert.alert('Error', 'Please make your password 7 characters or longer.');
+        Alert.alert("Error", "Please make your password 7 characters or longer.");
         return;
       }
       if (password !== confirmPassword) {
-        Alert.alert('Error', 'Passwords do not match');
+        Alert.alert("Error", "Passwords do not match");
         return;
       }
       const response = await createUserWithEmailAndPassword(
@@ -48,6 +49,7 @@ const Register = () => {
 
   return (
     <SafeAreaView style={commonStyles.defaultContainer}>
+      <Logo width={200} height={200} style={{ marginBottom: 35 }} /> {/* Add the logo */}
       <Text style={commonStyles.title}>Sign up</Text>
       <TextInput
         style={commonStyles.defaultTextInput}
@@ -77,7 +79,9 @@ const Register = () => {
           <TouchableOpacity style={commonStyles.defaultButton} onPress={signUp}>
             <Text style={commonStyles.text}>Create account</Text>
           </TouchableOpacity>
-          <Text onPress={() => navigation.navigate("Login")}>Have an account? Log in here</Text>
+          <Text onPress={() => navigation.navigate("Login")}>
+            Have an account? Log in here
+          </Text>
         </>
       )}
     </SafeAreaView>

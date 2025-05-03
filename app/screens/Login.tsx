@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
+import Logo from "../../assets/Logo.svg"; // Import the SVG logo
 import React, { useState } from "react";
 import { firebase_auth } from "../../FirebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -37,6 +38,7 @@ const Login = () => {
 
   return (
     <SafeAreaView style={commonStyles.defaultContainer}>
+      <Logo width={200} height={200} style={{ marginBottom: 35 }} /> 
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
