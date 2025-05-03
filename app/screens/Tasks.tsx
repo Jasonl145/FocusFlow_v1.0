@@ -41,17 +41,20 @@ const Tasks: React.FC = () => {
     );
 
     const unsubscribe = onSnapshot(dbQuery, (snapshot) => {
-      const tasksData = snapshot.docs.map((doc) => ({
-        id: doc.id, // <-- this adds the Firestore document ID
-        ...doc.data(),
-      })) as unknown as (Task & { id: string })[];
-
-      // Group tasks by date
-      const grouped: { [date: string]: Task[] } = {};
-      tasksData.forEach((task) => {
-        if (!grouped[task.date]) grouped[task.date] = [];
-        grouped[task.date].push(task);
-      });
+        const tasksData = snapshot.docs.map((doc) => ({
+          id: doc.id, // <-- this adds the Firestore document ID
+          ...doc.data(),
+        })) as unknown as (Task & { id: string })[];
+    
+        // Group tasks by date
+        const grouped: { [date: string]: Task[] } = {};
+        tasksData.forEach((task) => {
+          // Parse the date as a local date to avoid timezone issues
+          const localDate = new Date(task.date + "T00:00:00");
+          const formattedDate = localDate.toISOString().split("T")[0]; // Ensure consistent YYYY-MM-DD format
+          if (!grouped[formattedDate]) grouped[formattedDate] = [];
+          grouped[formattedDate].push(task);
+        });
 
       // Convert to sectionElement[] and sort tasks by start_time
       const sections: sectionElement[] = Object.entries(grouped).map(
@@ -112,7 +115,8 @@ const Tasks: React.FC = () => {
   );
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    const [year, month, day] = dateString.split("-").map(Number);
+    const date = new Date(year, month - 1, day); // Treat as local date
     return new Intl.DateTimeFormat("en-US", {
       weekday: "long", // Adds the day of the week
       month: "long",
