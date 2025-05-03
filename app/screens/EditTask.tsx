@@ -117,7 +117,7 @@ const EditTask: React.FC = () => {
             if (user && task.id) {
               try {
                 await deleteDoc(doc(db, "tasks", task.id));
-                navigation.navigate("Home"); // delete the task if the user is found and the task id is not null by finding the task id in the database and deleting it with DeleteDoc. then navigate back home.
+                navigation.goBack(); // delete the task if the user is found and the task id is not null by finding the task id in the database and deleting it with DeleteDoc. then navigate back home.
               } catch (e) {
                 alert("Failed to delete task.");
                 console.error("Error deleting task: ", e);
