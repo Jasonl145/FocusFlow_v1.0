@@ -49,7 +49,7 @@ const Register = () => {
 
   return (
     <SafeAreaView style={commonStyles.defaultContainer}>
-      <Logo width={200} height={200} style={{ marginBottom: 35 }} /> {/* Add the logo */}
+      <Logo width={200} height={200} style={{ marginBottom: 35 }} /> 
       <Text style={commonStyles.title}>Sign up</Text>
       <TextInput
         style={commonStyles.defaultTextInput}

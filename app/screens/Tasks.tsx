@@ -12,6 +12,8 @@ import { collection, query, where, orderBy, onSnapshot, doc, updateDoc } from "f
 import { getAuth, onAuthStateChanged, User } from "@firebase/auth";
 import { Task } from "../../lib/constants";
 import AgendaItem from "./AgendaItem";
+import { useNavigation } from "@react-navigation/native";
+import { TaskCreateNavigationProp } from "../../lib/constants";
 
 type sectionElement = {
   title: string;
@@ -26,12 +28,19 @@ const Tasks: React.FC = () => {
   const auth = getAuth();
   const tasksCollection = collection(db, "tasks");
 
+  const navigation = useNavigation<TaskCreateNavigationProp>();
+
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
     });
     return unsubscribe;
   }, []);
+
+  const handleItemPress = (item: Task) => {
+    navigation.navigate("EditTask", { task: item });
+  };
 
   const fetchTasks = (currentUser: User) => {
     const dbQuery = query(
@@ -109,7 +118,7 @@ const Tasks: React.FC = () => {
   const renderItem = ({ item }: { item: Task }) => (
     <AgendaItem
       item={item}
-      onPress={() => console.log("Task pressed:", item)}
+      onPress={() => handleItemPress(item)}
       onCheckmarkPress={() => handleCheckmarkPress(item)}
     />
   );
