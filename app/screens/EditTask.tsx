@@ -91,7 +91,7 @@ const EditTask: React.FC = () => {
       try {
         const taskDoc = doc(db, "tasks", task.id);
         await updateDoc(taskDoc, updatedTask);
-        navigation.navigate("Home");
+        navigation.goBack();
       } catch (e) {
         alert("Failed to update task.");
         console.error("Error updating task: ", e);

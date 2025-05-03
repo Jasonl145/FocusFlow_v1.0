@@ -19,6 +19,7 @@ import { Entypo, MaterialIcons } from "@expo/vector-icons";
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
+const TasksStack = createNativeStackNavigator();
 
 function HomeStackNavigator() {
   return (
@@ -39,6 +40,28 @@ function HomeStackNavigator() {
         options={{ title: "Edit Task" }}
       />
     </HomeStack.Navigator>
+  );
+}
+
+function TasksStackNavigator() {
+  return (
+    <TasksStack.Navigator>
+      <TasksStack.Screen
+        name="TasksMain"
+        component={Tasks}
+        options={{ title: "Tasks", headerShown: false }}
+      />
+      <TasksStack.Screen
+        name="EditTask"
+        component={EditTask}
+        options={{ title: "Edit Task" }}
+      />
+      <TasksStack.Screen
+        name="CreateTask"
+        component={CreateTask}
+        options={{ title: "Create Task" }}
+      />
+    </TasksStack.Navigator>
   );
 }
 
@@ -64,7 +87,7 @@ function BottomTab() {
       />
       <Tabs.Screen
         name="Tasks"
-        component={Tasks} 
+        component={TasksStackNavigator} // <-- use the stack here
         options={{
           tabBarLabel: "Tasks",
           tabBarIcon: ({ color, size }) => (
@@ -85,12 +108,12 @@ function BottomTab() {
         }}
       />
       <Tabs.Screen
-        name="Profile" 
-        component={ Profile }
+        name="Profile"
+        component={Profile}
         options={{
           tabBarLabel: "Profile",
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="person" color={color} size={size} /> 
+            <MaterialIcons name="person" color={color} size={size} />
           ),
           headerShown: false,
         }}
