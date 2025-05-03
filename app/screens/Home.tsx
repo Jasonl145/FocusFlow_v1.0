@@ -32,9 +32,11 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<User | null>(null);
 
-  const auth = getAuth();
-  const tasksCollection = collection(db, "tasks");
+ 
 
+  const auth = getAuth();
+  console.log("User has been authenticated: ", auth.currentUser);
+  const tasksCollection = collection(db, "tasks");
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
@@ -53,7 +55,7 @@ const Home: React.FC = () => {
       const data = await getDocs(dbQuery);
       const tasksData = data.docs.map((doc) => ({
         id: doc.id, // <-- this adds the Firestore document ID
-        ...doc.data(),
+        ...(doc.data() as Record<string, unknown>),
       })) as unknown as (Task & { id: string })[];
       console.log("~~~~~~~~\nSample fetched task:", tasksData[0], "\n~~~~~~~~");
 

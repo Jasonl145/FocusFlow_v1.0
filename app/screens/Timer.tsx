@@ -253,7 +253,7 @@ const Timer = () => {
         </View>
       </Modal>
     </SafeAreaView>
-  );//I'm going to push this into a branch before changing anything
+  );//no its in overlay
 };
 
 const styles = StyleSheet.create({
