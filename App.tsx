@@ -3,9 +3,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Login from "./app/screens/Login";
+import Profile from "./app/screens/Profile";
 import Register from "./app/screens/Register";
-import List from "./app/screens/List";
 import Home from "./app/screens/Home";
+import Tasks from "./app/screens/Tasks";
 import Timer from "./app/screens/Timer";
 import CreateTask from "./app/screens/CreateTask";
 import EditTask from "./app/screens/EditTask";
@@ -13,7 +14,6 @@ import { onAuthStateChanged, User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { firebase_auth } from "./FirebaseConfig";
 import { OverlayProvider } from "./app/screens/components/OverlayContext";
-
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 
 const Stack = createNativeStackNavigator();
@@ -63,6 +63,17 @@ function BottomTab() {
         }}
       />
       <Tabs.Screen
+        name="Tasks"
+        component={Tasks} 
+        options={{
+          tabBarLabel: "Tasks",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="list" color={color} size={size} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
         name="Timer"
         component={Timer}
         options={{
@@ -74,12 +85,12 @@ function BottomTab() {
         }}
       />
       <Tabs.Screen
-        name="List"
-        component={List}
+        name="Profile" 
+        component={ Profile }
         options={{
-          tabBarLabel: "List",
+          tabBarLabel: "Profile",
           tabBarIcon: ({ color, size }) => (
-            <Entypo name="list" color={color} size={size} />
+            <MaterialIcons name="person" color={color} size={size} /> 
           ),
           headerShown: false,
         }}

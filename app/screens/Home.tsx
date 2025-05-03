@@ -6,20 +6,14 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { CalendarProvider, AgendaList } from "react-native-calendars";
+import { CalendarProvider, AgendaList, Calendar } from "react-native-calendars";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  commonStyles,
-  Task,
-  TaskCreateNavigationProp,
-} from "../../lib/constants";
-import AgendaItem from "./AgendaItem";
 import { useNavigation } from "@react-navigation/native";
 import { db } from "../../FirebaseConfig";
 import { collection, getDocs, query, where, orderBy, doc, updateDoc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, User } from "@firebase/auth";
-
-
+import { commonStyles, Task, TaskCreateNavigationProp } from "../../lib/constants";
+import AgendaItem from "./AgendaItem";
 
 type sectionElement = {
   title: string;
@@ -31,12 +25,13 @@ const Home: React.FC = () => {
   const [items, setItems] = useState<sectionElement[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<User | null>(null);
-
- 
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  ); // Default to today's date
 
   const auth = getAuth();
-  console.log("User has been authenticated: ", auth.currentUser);
   const tasksCollection = collection(db, "tasks");
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
@@ -44,7 +39,7 @@ const Home: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  const fetchTasks = async (currentUser: User) => {
+  const fetchTasks = async (currentUser: User, date?: string) => {
     try {
       const dbQuery = query(
         tasksCollection,
@@ -55,9 +50,8 @@ const Home: React.FC = () => {
       const data = await getDocs(dbQuery);
       const tasksData = data.docs.map((doc) => ({
         id: doc.id, // <-- this adds the Firestore document ID
-        ...(doc.data() as Record<string, unknown>),
+        ...doc.data(),
       })) as unknown as (Task & { id: string })[];
-      console.log("~~~~~~~~\nSample fetched task:", tasksData[0], "\n~~~~~~~~");
 
       // Group tasks by date
       const grouped: { [date: string]: Task[] } = {};
@@ -65,8 +59,6 @@ const Home: React.FC = () => {
         if (!grouped[task.date]) grouped[task.date] = [];
         grouped[task.date].push(task);
       });
-
-      console.log("Grouped Tasks: ", grouped);
 
       // Convert to sectionElement[] and sort tasks by start_time
       const sections: sectionElement[] = Object.entries(grouped).map(
@@ -85,8 +77,12 @@ const Home: React.FC = () => {
         (a, b) => new Date(a.title).getTime() - new Date(b.title).getTime()
       );
 
-      setItems(sections);
-      console.log("________\n", items);
+      // Filter tasks for the selected date if provided
+      const filteredSections = date
+        ? sections.filter((section) => section.title === date)
+        : sections;
+
+      setItems(filteredSections);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching tasks: ", error);
@@ -94,35 +90,30 @@ const Home: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      setLoading(true);
+      fetchTasks(user, selectedDate);
+    } else {
+      setItems([]);
+      setLoading(false);
+    }
+  }, [user, selectedDate]);
+
   const handleCheckmarkPress = async (item: Task) => {
     if (!item.id) return;
     try {
       await updateDoc(doc(db, "tasks", item.id), {
         isCompleted: !item.isCompleted,
       });
-      // Optionally, refresh tasks after update
-      if (user) fetchTasks(user);
+      if (user) fetchTasks(user, selectedDate);
     } catch (e) {
       alert("Failed to update task completion.");
       console.error(e);
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      setLoading(true);
-      const fetch = async () => {
-        await fetchTasks(user); // fetchTasks will setLoading(false) when done
-      };
-      fetch();
-    } else {
-      setItems([]);
-      setLoading(false);
-    }
-  }, [user]);
-
   const handleItemPress = (item: Task) => {
-    // Route to the EditTask screen with the selected task
     navigation.navigate("EditTask", { task: item });
   };
 
@@ -131,44 +122,86 @@ const Home: React.FC = () => {
       item={item}
       onPress={() => handleItemPress(item)}
       onCheckmarkPress={(e) => {
-        e.stopPropagation(); // prevent parent (agendaItem itself) onPress function from opening EditTask component
+        e.stopPropagation();
         handleCheckmarkPress(item);
       }}
     />
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <CalendarProvider date={new Date().toISOString()}>
-        {loading ? (
-          <ActivityIndicator
-            size="large"
-            color="#1A237E"
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          />
-        ) : items.length > 0 ? (
-          <AgendaList
-            sections={items}
-            renderItem={renderItem}
-            theme={{
-              agendaDayTextColor: "#5C6BC0",
-              agendaDayNumColor: "#5C6BC0",
-              agendaTodayColor: "#5C6BC0",
-              agendaKnobColor: "#5C6BC0",
-            }}
-          />
-        ) : (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#7289DA" }}>
+      <CalendarProvider date={selectedDate}>
+        {/* Calendar at the top */}
+        <Calendar
+          onDayPress={(day: { dateString: string }) => setSelectedDate(day.dateString)}
+          markedDates={{
+            [selectedDate]: { selected: true, selectedColor: "#255ec2" },
+          }}
+          theme={{
+            calendarBackground: "#7289DA",
+            dayTextColor: "#FFFFFF",
+            todayTextColor: "#3B249E",
+            selectedDayBackgroundColor: "#255ec2",
+            selectedDayTextColor: "#FFFFFF",
+            monthTextColor: "#FFFFFF",
+            arrowColor: "#FFFFFF",
+          }}
+        />
+
+        {/* Tasks Header */}
+        <View
+          style={{
+            marginTop: 20,
+            paddingVertical: 15,
+            backgroundColor: "#506099", // Added background color
+            alignItems: "center",
+            borderRadius: 10,
+          }}
+        >
           <Text
             style={{
-              textAlign: "center",
-              marginTop: 20,
-              fontSize: 18,
+              fontSize: 24,
               fontWeight: "bold",
+              color: "#FFFFFF",
             }}
           >
-            No tasks available
+            Tasks
           </Text>
-        )}
+        </View>
+
+        {/* Task List */}
+        <View style={{ marginTop: 20 }}>
+          {loading ? (
+            <ActivityIndicator
+              size="large"
+              color="#1A237E"
+              style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            />
+          ) : items.length > 0 ? (
+            <AgendaList
+              sections={items}
+              renderItem={renderItem}
+              theme={{
+                agendaDayTextColor: "#5C6BC0",
+                agendaDayNumColor: "#5C6BC0",
+                agendaTodayColor: "#5C6BC0",
+                agendaKnobColor: "#5C6BC0",
+              }}
+            />
+          ) : (
+            <Text
+              style={{
+                textAlign: "center",
+                marginTop: 20,
+                fontSize: 18,
+                fontWeight: "bold",
+                color: "#FFFFFF",
+              }}
+            >
+              No tasks available
+            </Text>
+          )}
+        </View>
       </CalendarProvider>
       <TouchableOpacity
         style={commonStyles.defaultFloatingButton}

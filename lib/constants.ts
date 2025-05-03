@@ -6,7 +6,7 @@ export const militaryToStandardTime = (time: string): string => {
   const period = hours >= 12 ? "PM" : "AM";
   const standardHours = hours % 12 || 12; // Convert to 12-hour format
   return `${standardHours}:${minutes.toString().padStart(2, "0")} ${period}`;
-}
+};
 
 export const standardToMilitaryTime = (time: string): string => {
   const [timePart, period] = time.split(" ");
@@ -17,7 +17,7 @@ export const standardToMilitaryTime = (time: string): string => {
     hours = 0; // Midnight case
   }
   return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-}
+};
 
 export const commonStyles = StyleSheet.create({
   title: {
@@ -86,7 +86,7 @@ export const commonStyles = StyleSheet.create({
   },
 });
 
-export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
+export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, "Login">;
 // A prop used to assist in login/register navigation
 
 type RootStackParamList = {
@@ -94,13 +94,13 @@ type RootStackParamList = {
   Register: undefined;
 }; // All pages needed for login/register navigation. 'Undefined' because the pages do not need any extra parameters
 
-export type TaskCreateNavigationProp = StackNavigationProp<TaskCreateStackParamList, 'Home'>
+export type TaskCreateNavigationProp = StackNavigationProp<TaskCreateStackParamList, "Home">;
 
 export type TaskCreateStackParamList = {
   Home: undefined;
   CreateTask: undefined;
   EditTask: { task: Task }; // Pass the task object to the EditTask screen
-}
+};
 
 export type Task = {
   id?: string;
@@ -111,14 +111,15 @@ export type Task = {
   end_time?: string | null;
   strict: boolean;
   isCompleted?: boolean; // Optional property to indicate if the task is completed
-}
+};
 
 type userTasksType = {
   [key: string]: Task[]; // key = date,
-}
+};
 
-export const defaultTasks: Task[] = [ // tester tasks, delete later
+export const defaultTasks: Task[] = [
   {
+    id: "1",
     user_id: 1,
     name: "Math exam",
     date: "2025-04-30", // YYYY-MM-DD format
@@ -127,6 +128,7 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     strict: false,
   },
   {
+    id: "2",
     user_id: 1,
     name: "Go to the gym",
     date: "2025-05-01",
@@ -135,6 +137,7 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     strict: true,
   },
   {
+    id: "3",
     user_id: 1,
     name: "Doctor's appointment",
     date: "2025-05-01",
@@ -143,13 +146,14 @@ export const defaultTasks: Task[] = [ // tester tasks, delete later
     strict: false,
   },
   {
+    id: "4",
     user_id: 1,
     name: "Grocery shopping",
     date: "2025-05-02",
     start_time: "10:00",
-    end_time: "11:00",  
+    end_time: "11:00",
     strict: true,
   },
 ];
 
-export const userTasks: userTasksType = {}; // change this to be pulled from db later
+export const userTasks: userTasksType = {}; // Change this to be pulled from the database later
