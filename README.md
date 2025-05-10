@@ -30,11 +30,14 @@ For the application to work as intended(for development), you will first need a 
 
    3. In your project you should see '</>'. Click on it to create an app.
 
-   4. Register the app and store the provided code snippet in a FirebaseConfig.ts file for Firebase setup.
+   4. Register the app and store the provided code snippet in a FirebaseConfig.ts file for Firebase setup.(only if you want to directly use your api keys, refer to the end for how to set up the .env for a more secure option)
+      
       For this setup you should only save the contents within: 
+      ```
       const firebaseConfig = {
          //the api keys
       }
+      ```
       and click continue to console
 
    5. On the left side of the page, click on "Authentication" to get started on user auth features.
@@ -47,7 +50,18 @@ For the application to work as intended(for development), you will first need a 
 
    9. Your Firebase Auth and Firestore Database should now be fully working.
 
-For you to test the code for development, download Android Studio and use a tutorial like [this one](https://www.youtube.com/watch?v=8gc5z3aKc6k) to test out the apk on your computer through a simulated android device. Once you have everything installed, clone the repo and open it in Android Studio.
+For you to test the code for development, download Android Studio and use a tutorial like [this one](https://www.youtube.com/watch?v=8gc5z3aKc6k) to test out the apk on your computer through a simulated android device. Once you have everything installed, clone the repo and open the emulator for your selected android device from Android Studio.
+
+For the Firebase implementation to function, you need to create an ".env" file in the root directory of the project. Paste the following formatted text into the .env file:
+```
+REACT_APP_API_KEY=/* your api key */
+REACT_APP_AUTH_DOMAIN=/* your api key */
+REACT_APP_PROJECT_ID=/* your api key */
+REACT_APP_STORAGE_BUCKET=/* your api key */
+REACT_APP_MESSAGING_SENDER_ID=/* your api key */
+REACT_APP_APP_ID=/* your api key */
+```
+Replace "/* your api key */" with the corresponding contents from the firebase configuration you stored earlier.(*Note: when pasting in your api keys, do not leave a space after the "=" and do not include any symbols such as quotation marks following the equal sign*)
 
 ## Downloading the apk file 
 
