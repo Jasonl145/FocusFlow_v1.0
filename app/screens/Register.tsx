@@ -13,6 +13,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { LoginScreenNavigationProp, commonStyles } from "../../lib/constants";
 
+//Register screen component
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +22,7 @@ const Register = () => {
 
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
+  // Checks if email and password are valid (matching and long enough)
   const signUp = async () => {
     setLoading(true);
     try {
@@ -79,6 +81,7 @@ const Register = () => {
           <TouchableOpacity style={commonStyles.defaultButton} onPress={signUp}>
             <Text style={commonStyles.text}>Create account</Text>
           </TouchableOpacity>
+          {/* Login navigation for returning users */}
           <Text onPress={() => navigation.navigate("Login")}>
             Have an account? Log in here
           </Text>

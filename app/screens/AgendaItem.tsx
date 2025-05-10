@@ -15,11 +15,13 @@ interface TaskProps {
   onCheckmarkPress: (event: GestureResponderEvent) => void;
 }
 
+// AgendaItem component that displays tasks
 const AgendaItem: React.FC<TaskProps> = ({
   item,
   onPress,
   onCheckmarkPress,
 }) => {
+  // Checking if no tasks are in the agenda for date
   if (!item || Object.keys(item).length === 0) {
     return (
       <View style={styles.emptyItem}>
@@ -28,6 +30,7 @@ const AgendaItem: React.FC<TaskProps> = ({
     );
   }
 
+  // Displays task with time and title
   return (
     <View style={styles.itemContainer}>
       <TouchableOpacity
@@ -40,12 +43,14 @@ const AgendaItem: React.FC<TaskProps> = ({
           {militaryToStandardTime(item.start_time)} - {militaryToStandardTime(item.end_time)}
         </Text>
         ) : (
+          // If no time set, display text
           <Text style={styles.itemTimeText}>No time set</Text>
         )
         }
         <Text style={styles.itemTitleText}>{item.name}</Text>
       </TouchableOpacity>
       <View style={styles.itemButtonContainer}>
+        {/* Checkmark button to mark task as completed*/}
         <TouchableOpacity onPress={onCheckmarkPress} activeOpacity={0.7}>
           {item.isCompleted ? (
             <Ionicons name="checkmark-circle" size={26} color="black" />
@@ -60,6 +65,7 @@ const AgendaItem: React.FC<TaskProps> = ({
 
 export default AgendaItem;
 
+// Styles for AgendaItem, including container, text, and button styles
 const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",

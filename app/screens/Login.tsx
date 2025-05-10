@@ -12,6 +12,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { commonStyles, LoginScreenNavigationProp } from "../../lib/constants";
 
+// Login screen component
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,6 +20,7 @@ const Login = () => {
 
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
+  // Sign-in function, check email and password to authenticate user
   const signIn = async () => {
     setLoading(true);
     try {
@@ -60,6 +62,7 @@ const Login = () => {
           <TouchableOpacity style={commonStyles.defaultButton} onPress={signIn}>
             <Text style={commonStyles.text}>Login</Text>
           </TouchableOpacity>
+          {/* Register navigation for first-time users */}
           <Text onPress={() => navigation.navigate("Register")}>
             Don't have an account? Register here
           </Text>

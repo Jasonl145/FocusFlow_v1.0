@@ -10,11 +10,13 @@ interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
 
+// Profile screen component
 const Profile = ({ navigation }: RouterProps) => {
   const [username, setUsername] = useState("Username"); // Editable username
   const userEmail = firebase_auth.currentUser?.email || "No email available"; // Get the user's email
   const [totalTasksDone, setTotalTasksDone] = useState<number>(0); // State for completed tasks
 
+  // Check amount of completed tasks
   const fetchCompletedTasks = async () => {
     const user = firebase_auth.currentUser;
     if (user) {
@@ -67,14 +69,14 @@ const Profile = ({ navigation }: RouterProps) => {
       {/* Custom Buttons */}
       <TouchableOpacity
         style={[styles.button, styles.exploreButton]}
-        onPress={() => navigation.navigate("HomeTab")} // Navigate to "HomeTab"
+        onPress={() => navigation.navigate("HomeTab")} // Navigate to HomeTab
       >
         <Text style={styles.buttonText}>Explore</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={[styles.button, styles.signOutButton]}
-        onPress={() => firebase_auth.signOut()}
+        onPress={() => firebase_auth.signOut()} // Signs out user and sends them to the login screen
       >
         <Text style={styles.buttonText}>Sign Out</Text>
       </TouchableOpacity>

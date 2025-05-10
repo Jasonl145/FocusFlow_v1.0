@@ -20,6 +20,7 @@ type sectionElement = {
   data: Task[];
 };
 
+// Tasks screen component
 const Tasks: React.FC = () => {
   const [items, setItems] = useState<sectionElement[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,6 +32,7 @@ const Tasks: React.FC = () => {
   const navigation = useNavigation<TaskCreateNavigationProp>();
 
 
+  // Authentication check
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
@@ -42,6 +44,7 @@ const Tasks: React.FC = () => {
     navigation.navigate("EditTask", { task: item });
   };
 
+  // Fetching task from Firestore
   const fetchTasks = (currentUser: User) => {
     const dbQuery = query(
       tasksCollection,
@@ -123,6 +126,7 @@ const Tasks: React.FC = () => {
     />
   );
 
+  // Format date for display
   const formatDate = (dateString: string) => {
     const [year, month, day] = dateString.split("-").map(Number);
     const date = new Date(year, month - 1, day); // Treat as local date
@@ -134,6 +138,7 @@ const Tasks: React.FC = () => {
     }).format(date);
   };
 
+  // Basic UI done for tasks screen
   return (
     <SafeAreaView style={styles.container}>
       {/* Header Section */}
@@ -169,6 +174,7 @@ const Tasks: React.FC = () => {
 
 export default Tasks;
 
+// Styles for tasks screen including headers and sections
 const styles = StyleSheet.create({
   container: {
     flex: 1,

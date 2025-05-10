@@ -18,11 +18,13 @@ interface OverlayProviderProps {
 export const OverlayProvider = ({ children }: OverlayProviderProps) => {
   const [showOverlay, setShowOverlay] = useState(false);
   
+  // Overlay toggle
   const toggleOverlay = () => {
     setShowOverlay(prev => !prev);
   };
   
   return (
+    // "WORKING" overlay
     <OverlayContext.Provider value={{ showOverlay, toggleOverlay }}>
       {children}
       {showOverlay && (
@@ -39,6 +41,7 @@ export const OverlayProvider = ({ children }: OverlayProviderProps) => {
   );
 };
 
+// Overlay containers, text, and styles
 const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',

@@ -39,6 +39,7 @@ const Home: React.FC = () => {
     return unsubscribe;
   }, []);
 
+  // Gathering task from Firestore
   const fetchTasks = async (currentUser: User, date?: string) => {
     try {
       const dbQuery = query(
@@ -100,6 +101,7 @@ const Home: React.FC = () => {
     }
   }, [user, selectedDate]);
 
+  // Checkmark button press handling
   const handleCheckmarkPress = async (item: Task) => {
     if (!item.id) return;
     try {
@@ -113,6 +115,7 @@ const Home: React.FC = () => {
     }
   };
 
+  // If a task is pressed it will navigate to the EditTask screen
   const handleItemPress = (item: Task) => {
     navigation.navigate("EditTask", { task: item });
   };

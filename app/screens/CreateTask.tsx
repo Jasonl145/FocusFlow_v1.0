@@ -16,14 +16,17 @@ import { db } from "../../FirebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { Task } from "../../lib/constants";
 
+// CreateTask component
 const CreateTask: React.FC = () => {
   const auth = getAuth();
   const user = auth.currentUser;
   const tasksCollection = collection(db, "tasks");
 
+  // Creating task in the database
   const createTodo = async (task: Task) => {
     if (user) {
       try {
+        // Document added to task collection with user ID and timestamp
         const docRef = await addDoc(tasksCollection, {
           ...task,
           user_id: user.uid,
@@ -38,6 +41,7 @@ const CreateTask: React.FC = () => {
       // this else should never happen, but just in case
     }
   };
+  // State variable for creating a task
   const navigation = useNavigation<TaskCreateNavigationProp>();
   const [taskName, setTaskName] = useState("");
   const [taskDate, setTaskDate] = useState("");
@@ -46,6 +50,7 @@ const CreateTask: React.FC = () => {
   const [taskStrict, setTaskStrict] = useState(false);
   const [taskCompleted, setTaskCompleted] = useState(false);
 
+  // Functions for entering task details
   const handleSubmit = () => {
     // first, verify inputs
     if (taskName === "") {
@@ -119,6 +124,7 @@ if (taskStartTime === "" && taskEndTime === "") {
   };
 
   return (
+    //UI for CreateTask screen
     <SafeAreaView style={styles.formContainer}>
       <Text style={styles.labelText}>What task do you have?</Text>
       <TextInput
