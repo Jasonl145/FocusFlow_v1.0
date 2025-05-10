@@ -107,8 +107,10 @@ We used the following:
 Firebase: Authentication
 Firestore: Database
 
-Main Packages used:
+We used Firebase for auth due since it was very easy to set up. Google provides all the functionality, and all we needed to do was link each button press on the login/register page to the Firebase functions. As for database, we used Firestore due to how easy it is to perform CRUD operations on a NoSQL database. Everything being saved as a JSON object meant we did not need to worry about convoluted database calls in other SQL languages, instead only having to interact with Firestore data as if we were using the fetch API.
 
+Main Packages used:
+```
 1. Firebase packages
    - "@react-native-async-storage/async-storage": "^1.23.1",
    - "@react-native-firebase/app": "^21.13.0",
@@ -127,20 +129,4 @@ Main Packages used:
    - "react-native": "^0.76.9",
    - "react-native-calendars": "^1.1311.0",
    - "react-native-paper": "^5.13.1",
-
-We used Firebase authentication because it was the most straight forward way to setup users/user accounts and kept the other packages simple so there was less conflicts/bugs to consider. We used Firestore because it was the easiest way to dynamically grab user specific data using Nosql database and was convenient to implement with the Firebase authentication.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
->>>>>>> e804fc0 (Initial commit)
+```
