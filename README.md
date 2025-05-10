@@ -76,7 +76,7 @@ Replace "/* your api key */" with the corresponding contents from the firebase c
 
    4. The apk file will start building on [Expo](https://expo.dev/) where the progress will be shown.
 
-   5. Once the built is finished, you can directly download the apk and run in on your android device or from an android emulator (drag and drop the apk file onto the emulated Android phone screen).
+   5. Once the build is finished, you can directly download the apk and run it on your android device or from an android emulator (drag and drop the apk file onto the emulated Android phone screen).
 
 ## Get started
 
@@ -121,7 +121,7 @@ We used the following:
 Firebase: Authentication
 Firestore: Database
 
-We used Firebase for auth due since it was very easy to set up. Google provides all the functionality, and all we needed to do was link each button press on the login/register page to the Firebase functions. As for database, we used Firestore due to how easy it is to perform CRUD operations on a NoSQL database. Everything being saved as a JSON object meant we did not need to worry about convoluted database calls in other SQL languages, instead only having to interact with Firestore data as if we were using the fetch API.
+We used Firebase for auth due since it was very easy to set up. Google provides all the functionality, and all we needed to do was link each button press on the login/register page to the Firebase functions. As for the database, we used Firestore due to how easy it is to perform CRUD operations on a NoSQL database. Everything being saved as a JSON object meant we did not need to worry about convoluted database calls in other SQL languages, instead only having to interact with Firestore data as if we were using the fetch API.
 
 Main Packages used:
 ```
