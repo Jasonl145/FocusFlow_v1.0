@@ -1,8 +1,9 @@
 
 # FocusFlow
-CSCI 380 Project
-=======
-# Welcome to our Expo app 👋
+
+## CSCI 380 Project
+
+### Welcome to our Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 The template we used was the [`expo-template-blank-typescript`](https://www.npmjs.com/package/expo-template-blank-typescript?activeTab=code).
@@ -10,80 +11,76 @@ The template we used was the [`expo-template-blank-typescript`](https://www.npmj
 ## Contributors
 
    1. [Ali Khachab](https://github.com/AliKhachab)
-      - Register page, todo list, Database setup
-   2. [Jason Li](https://github.com/Jasonl145)(me)
-      - Firebase auth/Firestore setup, todo list prototype, Navigation
+      - Screens (login/register, home page), database testing
+   2. [Jason Li](https://github.com/Jasonl145) (me)
+      - Firebase auth, Firestore database setup, screens (login/register, home page)
    3. [Luis Rivera](https://github.com/riverwaylui)
-      - Frontend, Calendar, Database testing
+      - Tasks screen, CSS styling, database testing
    4. [Alan Yuan](https://github.com/AlanYuan16)
-      - Pomodoro timer, Study mode overlay, Debugging
+      - Pomodoro timer screen, study mode overlay, debugging
 
 ## Setup/User Guide
 
 For the application to work as intended(for development), you will first need a firebase account/api
 *Note: if you already have the apk file downloaded from the shared project google drive, refer to the end to use the application*
 
-   1. Create a firebase account 
+   1. Create a Firebase account.
 
-   2. Click in to firebase console and create a project
+   2. Click on the Firebase console and create a new project.
 
-   3. In your project you should see '</>', click in to it to create an app
+   3. In your project you should see '</>'. Click on it to create an app.
 
-   4. register the app and store the provide code snippet for firebase setup.
+   4. Register the app and store the provided code snippet in a FirebaseConfig.ts file for Firebase setup.
       For this setup you should only save the contents within: 
       const firebaseConfig = {
          //the api keys
       }
       and click continue to console
 
-   5. Check the side bar of the web page and click in to 'Authentication' and click get started
+   5. On the left side of the page, click on "Authentication" to get started on user auth features.
 
-   6. Under Native providers, click 'Email/Password' and toggle/enable Email/password and save
+   6. Under Native providers, click 'Email/Password' and toggle/enable Email/password, then save.
 
-   7. Find Firestore Database in the sidebars and click Create database and click next for the next few prompts
+   7. Find Firestore Database in the left sidebar and click "Create database". Click "next" on the following prompts.
 
-   8. Find the Rules section of the database configuration and replace the if statement in the rules to be "if request.auth != null;"
+   8. Once the database is created, find the Rules section of the database configuration and replace the if statement in the rules to be "if request.auth != null;".
 
-   9. Now both the authencation and database of our project should be working as the configuration files are already present
+   9. Your Firebase Auth and Firestore Database should now be fully working.
 
-   For you to test the code for development, download android studio and follow any youtube tutorial on getting your prefered android device emulated
-
-   Clone the repo, and follow the steps in 'Get started'
+For you to test the code for development, download Android Studio and use a tutorial like [this one](https://www.youtube.com/watch?v=8gc5z3aKc6k) to test out the apk on your computer through a simulated android device. Once you have everything installed, clone the repo and open it in Android Studio.
 
 ## Downloading the apk file 
 
-   For the most convenient process of downloading the apk file once everything is set up and working:
+   1. Log in/sign up for an [Expo](https://expo.dev/) account in your browser.
 
-   1. Log in/sign up for an [Expo](https://expo.dev/) account in your browser
-
-   2. Once log in, run the following command in your console
+   2. Once logged in, run the following command in your console:
 
    ```bash
    eas build -p android --profile preview
    ```
-   3. Continue with the prompts by typing 'y'
+   3. Continue with the prompts by typing 'y'.
 
    4. The apk file will start building on [Expo](https://expo.dev/) where the progress will be shown.
 
-   5. Once the built is finished, you can directly download the apk and run in on your android device or from an android emulator(drag and drop the apk file in to the emulated screen)
+   5. Once the built is finished, you can directly download the apk and run in on your android device or from an android emulator (drag and drop the apk file onto the emulated Android phone screen).
 
 ## Get started
 
-Once finished with the first part of the Setup Guide:
+Once you have the apk installed on the simulated Android device and have the repository opened in Android Studio:
 
-1. Install dependencies
+1. Install dependencies by typing this command in the root directory:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Start the app:
 
    ```bash
     npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+In the output, you'll find options to open the app in
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
@@ -95,17 +92,20 @@ You can start developing by editing the files inside the **app** directory. This
 ## Technology Stack
 
 We used the following:
-   1. Windows OS
-   2. VScode
-   3. Git
-   4. Node.js
-   5. Android studio
-   6. Expo Go(mobile app)
+   1. TypeScript
+   2. React
+   4. Visual Studio Code
+   5. Git
+   6. GitHub
+   7. Node.js
+   8. Android studio
+   9. Expo Go (mobile app)
 
 
 ## Packages and APIs:
 
-Firebase: Authentication and Database(Firestore)
+Firebase: Authentication
+Firestore: Database
 
 Main Packages used:
 
