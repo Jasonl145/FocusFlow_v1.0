@@ -7,6 +7,7 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 The template we used was the [`expo-template-blank-typescript`](https://www.npmjs.com/package/expo-template-blank-typescript?activeTab=code).
+If you would like to view a video demo of our project, [click here](https://drive.google.com/file/d/1HMkA5Hyw2GoxkXdnqb0fcWh-yfiGs7MJ/view?usp=sharing).
 
 ## Contributors
 
